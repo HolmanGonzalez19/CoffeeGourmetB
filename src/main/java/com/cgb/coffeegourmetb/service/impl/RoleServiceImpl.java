@@ -4,16 +4,19 @@ import com.cgb.coffeegourmetb.dto.request.CreateRoleRequest;
 import com.cgb.coffeegourmetb.dto.request.UpdateRoleRequest;
 import com.cgb.coffeegourmetb.dto.response.RoleResponse;
 import com.cgb.coffeegourmetb.entity.Role;
-import com.cgb.coffeegourmetb.exception.ResourceNotFoundException;
 import com.cgb.coffeegourmetb.exception.BusinessException;
+import com.cgb.coffeegourmetb.exception.ResourceNotFoundException;
 import com.cgb.coffeegourmetb.mapper.RoleMapper;
 import com.cgb.coffeegourmetb.repository.RoleRepository;
 import com.cgb.coffeegourmetb.service.interfaces.RoleService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import com.cgb.coffeegourmetb.util.constants.RoleMessages;
 
 import java.util.List;
 
 @Service
+@Transactional
 public class RoleServiceImpl implements RoleService {
 
     private final RoleRepository roleRepository;
@@ -31,6 +34,7 @@ public class RoleServiceImpl implements RoleService {
      * @return Lista de roles activos.
      */
     @Override
+    @Transactional(readOnly = true)
     public List<RoleResponse> findAll() {
 
         return roleRepository.findByActivoTrue()
@@ -45,6 +49,7 @@ public class RoleServiceImpl implements RoleService {
      * @return Lista de roles inactivos.
      */
     @Override
+    @Transactional(readOnly = true)
     public List<RoleResponse> findAllInactive() {
 
         return roleRepository.findByActivoFalse()
@@ -60,15 +65,17 @@ public class RoleServiceImpl implements RoleService {
      * @return Rol encontrado.
      */
     @Override
+    @Transactional(readOnly = true)
     public RoleResponse findById(Long id) {
 
         Role role = roleRepository.findByIdAndActivoTrue(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
-                                "No existe un rol activo con id: " + id));
+                                RoleMessages.ACTIVE_ROLE_NOT_FOUND + id));
 
         return roleMapper.toResponse(role);
     }
+
     /**
      * Crea un nuevo rol.
      *
@@ -149,7 +156,7 @@ public class RoleServiceImpl implements RoleService {
         return roleRepository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
-                                "No existe un rol con id: " + id));
+                                RoleMessages.ROLE_NOT_FOUND + id));
     }
 
     /**
@@ -161,7 +168,7 @@ public class RoleServiceImpl implements RoleService {
 
         if (roleRepository.existsByNombre(nombre)) {
             throw new BusinessException(
-                    "Ya existe un rol con el nombre: " + nombre);
+                    RoleMessages.ROLE_ALREADY_EXISTS + nombre);
         }
 
     }
@@ -176,7 +183,7 @@ public class RoleServiceImpl implements RoleService {
 
         if (roleRepository.existsByNombreAndIdNot(nombre, id)) {
             throw new BusinessException(
-                    "Ya existe otro rol con el nombre: " + nombre);
+                    RoleMessages.ROLE_ALREADY_EXISTS_FOR_UPDATE + nombre);
         }
 
     }
