@@ -46,6 +46,10 @@ public final class ApiPaths {
      * Proveedores
      * ========================== */
     public static final String SUPPLIERS = API + "/suppliers";
+    public static final String SUPPLIERS_BY_ID = "/{id}";
+    public static final String SUPPLIERS_INACTIVE = "/inactivos";
+    public static final String SUPPLIERS_ACTIVATE = "/{id}/activate";
+    public static final String SUPPLIERS_DEACTIVATE = "/{id}/deactivate";
 
     /* ==========================
      * Métodos de Pago
