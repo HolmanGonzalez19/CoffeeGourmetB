@@ -47,6 +47,10 @@ public final class ApiPaths {
      * Métodos de Pago
      * ========================== */
     public static final String PAYMENT_METHODS = API + "/payment-methods";
+    public static final String PAYMENT_METHODS_BY_ID = "/{id}";
+    public static final String PAYMENT_METHODS_INACTIVE = "/inactivos";
+    public static final String PAYMENT_METHODS_ACTIVATE = "/{id}/activate";
+    public static final String PAYMENT_METHODS_DEACTIVATE = "/{id}/deactivate";
 
     /* ==========================
      * Compras
