@@ -37,6 +37,10 @@ public final class ApiPaths {
      * Categorías
      * ========================== */
     public static final String CATEGORIES = API + "/categories";
+    public static final String CATEGORIES_BY_ID = "/{id}";
+    public static final String CATEGORIES_INACTIVE = "/inactivos";
+    public static final String CATEGORIES_ACTIVATE = "/{id}/activate";
+    public static final String CATEGORIES_DEACTIVATE = "/{id}/deactivate";
 
     /* ==========================
      * Proveedores
