@@ -27,6 +27,10 @@ public final class ApiPaths {
      * Usuarios
      * ========================== */
     public static final String USERS = API + "/users";
+    public static final String USERS_BY_ID = "/{id}";
+    public static final String USERS_INACTIVE = "/inactivos";
+    public static final String USERS_ACTIVATE = "/{id}/activate";
+    public static final String USERS_DEACTIVATE = "/{id}/deactivate";
 
     /* ==========================
      * Productos
