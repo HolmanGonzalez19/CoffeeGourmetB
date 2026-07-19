@@ -32,6 +32,10 @@ public final class ApiPaths {
      * Productos
      * ========================== */
     public static final String PRODUCTS = API + "/products";
+    public static final String PRODUCTS_BY_ID = "/{id}";
+    public static final String PRODUCTS_INACTIVE = "/inactivos";
+    public static final String PRODUCTS_ACTIVATE = "/{id}/activate";
+    public static final String PRODUCTS_DEACTIVATE = "/{id}/deactivate";
 
     /* ==========================
      * Categorías
