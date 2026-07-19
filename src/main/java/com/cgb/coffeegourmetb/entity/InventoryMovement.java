@@ -3,9 +3,11 @@ package com.cgb.coffeegourmetb.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Entity
-@Table(name = "movimientos_inventario", schema = "coffeegourmet")
+@Table(name = "movimientos_inventario")
 public class InventoryMovement {
 
     @Id
@@ -16,30 +18,26 @@ public class InventoryMovement {
     @JoinColumn(name = "producto_id", nullable = false)
     private Product producto;
 
-    /*@ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
-    private User usuario;*/
+    private User usuario;
 
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Enumerated(EnumType.STRING)
-    @Column(name = "tipo_movimiento", nullable = false, columnDefinition = "tipo_movimiento")
+    @Column(name = "tipo_movimiento", columnDefinition = "coffeegourmet.tipo_movimiento", nullable = false)
     private MovementType tipoMovimiento;
 
-    @Column(nullable = false)
+    @Column(name = "cantidad", nullable = false)
     private Integer cantidad;
 
-    @Column(length = 255)
+    @Column(name = "motivo")
     private String motivo;
 
-    @Column(length = 100)
+    @Column(name = "referencia")
     private String referencia;
 
-    @Column(nullable = false)
+    @Column(name = "fecha", nullable = false)
     private LocalDateTime fecha;
-
-    @PrePersist
-    public void prePersist() {
-        fecha = LocalDateTime.now();
-    }
 
     public InventoryMovement() {
     }
@@ -56,13 +54,13 @@ public class InventoryMovement {
         this.producto = producto;
     }
 
-   /* public User getUsuario() {
+    public User getUsuario() {
         return usuario;
     }
 
     public void setUsuario(User usuario) {
         this.usuario = usuario;
-    }*/
+    }
 
     public MovementType getTipoMovimiento() {
         return tipoMovimiento;
@@ -103,5 +101,4 @@ public class InventoryMovement {
     public void setFecha(LocalDateTime fecha) {
         this.fecha = fecha;
     }
-
 }
