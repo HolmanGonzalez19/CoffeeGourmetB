@@ -81,7 +81,10 @@ public final class ApiPaths {
     /* ==========================
      * Inventario
      * ========================== */
-    public static final String INVENTORY = API + "/inventory";
+    public static final String INVENTORY = "/api/inventory";
+    public static final String INVENTORY_BY_PRODUCT = "/product/{productId}";
+    public static final String INVENTORY_MOVEMENTS = "/product/{productId}/movements";
+    public static final String INVENTORY_REGISTER_MOVEMENT = "/movements";
 
     /* ==========================
      * Caja
