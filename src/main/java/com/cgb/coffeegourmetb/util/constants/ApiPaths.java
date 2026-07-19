@@ -84,4 +84,13 @@ public final class ApiPaths {
      * ========================== */
     public static final String CASH_REGISTER = API + "/cash-register";
 
+    /* ==========================
+     * Historial de Precios
+     * ========================== */
+    public static final String PRICE_HISTORY = API + "/price-history";
+    public static final String PRICE_HISTORY_BY_ID = "/{id}";
+    public static final String PRICE_HISTORY_BY_PRODUCT = "/product/{productId}";
+    public static final String PRICE_HISTORY_INACTIVE = "/inactivos";
+    public static final String PRICE_HISTORY_ACTIVATE = "/{id}/activate";
+    public static final String PRICE_HISTORY_DEACTIVATE = "/{id}/deactivate";
 }
