@@ -5,6 +5,7 @@ import com.cgb.coffeegourmetb.dto.request.UpdatePriceHistoryRequest;
 import com.cgb.coffeegourmetb.dto.response.PriceHistoryResponse;
 
 import java.util.List;
+import java.math.BigDecimal;
 
 public interface PriceHistoryService {
 
@@ -25,4 +26,6 @@ public interface PriceHistoryService {
 
     void deactivate(Long id);
 
+    void updatePurchasePrice(Long productoId,
+                             BigDecimal nuevoPrecioCompra);
 }

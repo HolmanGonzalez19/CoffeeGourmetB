@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.math.BigDecimal;
 
 @Service
 @Transactional
@@ -138,6 +139,79 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
         history.setFechaFin(LocalDateTime.now());
 
         repository.save(history);
+    }
+
+    @Override
+    public void updatePurchasePrice(Long productoId,
+                                    BigDecimal nuevoPrecioCompra) {
+
+        Product product = findProduct(productoId);
+
+        PriceHistory currentPrice = repository
+                .findByProductoIdAndActivoTrue(productoId)
+                .orElse(null);
+
+        /*
+         * Primera compra del producto.
+         */
+        if (currentPrice == null) {
+
+            PriceHistory history = new PriceHistory();
+
+            history.setProducto(product);
+
+            history.setPrecioCompra(nuevoPrecioCompra);
+
+            history.setPrecioVenta(BigDecimal.ZERO);
+
+            history.setFechaInicio(LocalDateTime.now());
+
+            history.setActivo(true);
+
+            repository.save(history);
+
+            return;
+        }
+
+        /*
+         * Si el precio no cambió,
+         * no hacemos nada.
+         */
+        if (currentPrice.getPrecioCompra()
+                .compareTo(nuevoPrecioCompra) == 0) {
+
+            return;
+        }
+
+        /*
+         * Cerramos el precio anterior.
+         */
+        currentPrice.setActivo(false);
+
+        currentPrice.setFechaFin(LocalDateTime.now());
+
+        repository.save(currentPrice);
+
+        /*
+         * Creamos el nuevo precio.
+         */
+        PriceHistory newPrice = new PriceHistory();
+
+        newPrice.setProducto(product);
+
+        newPrice.setPrecioCompra(nuevoPrecioCompra);
+
+        /*
+         * Conservamos el precio de venta.
+         */
+        newPrice.setPrecioVenta(
+                currentPrice.getPrecioVenta());
+
+        newPrice.setFechaInicio(LocalDateTime.now());
+
+        newPrice.setActivo(true);
+
+        repository.save(newPrice);
     }
 
     private Product findProduct(Long id) {

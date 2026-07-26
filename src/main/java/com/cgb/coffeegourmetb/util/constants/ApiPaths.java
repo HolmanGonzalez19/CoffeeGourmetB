@@ -72,6 +72,14 @@ public final class ApiPaths {
      * Compras
      * ========================== */
     public static final String PURCHASES = API + "/purchases";
+    public static final String PURCHASES_BY_ID = "/{id}";
+    public static final String PURCHASES_BY_RECEIPT = "/receipt/{receipt}";
+    public static final String PURCHASES_BY_SUPPLIER = "/supplier/{supplierId}";
+    public static final String PURCHASES_BY_USER = "/user/{userId}";
+    public static final String PURCHASES_TODAY = "/today";
+    public static final String PURCHASES_MONTH = "/month";
+    public static final String PURCHASES_BETWEEN = "/between";
+    public static final String PURCHASES_CANCEL = "/{id}/cancel";
 
     /* ==========================
      * Ventas
