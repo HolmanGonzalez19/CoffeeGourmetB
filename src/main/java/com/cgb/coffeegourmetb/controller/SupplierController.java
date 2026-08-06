@@ -8,16 +8,25 @@ import com.cgb.coffeegourmetb.util.constants.ApiPaths;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
+
+import static com.cgb.coffeegourmetb.security.SecurityExpressions.SUPPLIER_READ;
+import static com.cgb.coffeegourmetb.security.SecurityExpressions.SUPPLIER_CREATE;
+import static com.cgb.coffeegourmetb.security.SecurityExpressions.SUPPLIER_UPDATE;
+import static com.cgb.coffeegourmetb.security.SecurityExpressions.SUPPLIER_ACTIVATE;
+import static com.cgb.coffeegourmetb.security.SecurityExpressions.SUPPLIER_DEACTIVATE;
 
 @RestController
 @RequestMapping(ApiPaths.SUPPLIERS)
 @Tag(name = "Proveedores", description = "API para la gestión de proveedores.")
+@SecurityRequirement(name = "bearerAuth")
 public class SupplierController {
 
     private final SupplierService service;
@@ -27,24 +36,28 @@ public class SupplierController {
     }
 
     @Operation(summary = "Listar proveedores activos")
+    @PreAuthorize(SUPPLIER_READ)
     @GetMapping
     public List<SupplierResponse> findAll() {
         return service.findAll();
     }
 
     @Operation(summary = "Listar proveedores inactivos")
+    @PreAuthorize(SUPPLIER_READ)
     @GetMapping(ApiPaths.SUPPLIERS_INACTIVE)
     public List<SupplierResponse> findAllInactive() {
         return service.findAllInactive();
     }
 
     @Operation(summary = "Consultar un proveedor por ID")
+    @PreAuthorize(SUPPLIER_READ)
     @GetMapping(ApiPaths.SUPPLIERS_BY_ID)
     public SupplierResponse findById(@PathVariable Long id) {
         return service.findById(id);
     }
 
     @Operation(summary = "Crear un proveedor")
+    @PreAuthorize(SUPPLIER_CREATE)
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Proveedor creado correctamente")
     })
@@ -55,6 +68,7 @@ public class SupplierController {
     }
 
     @Operation(summary = "Actualizar un proveedor")
+    @PreAuthorize(SUPPLIER_UPDATE)
     @PutMapping(ApiPaths.SUPPLIERS_BY_ID)
     public SupplierResponse update(@PathVariable Long id,
                                    @Valid @RequestBody UpdateSupplierRequest request) {
@@ -62,6 +76,7 @@ public class SupplierController {
     }
 
     @Operation(summary = "Activar un proveedor")
+    @PreAuthorize(SUPPLIER_ACTIVATE)
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Proveedor activado correctamente"),
             @ApiResponse(responseCode = "404", description = "Proveedor no encontrado")
@@ -73,6 +88,7 @@ public class SupplierController {
     }
 
     @Operation(summary = "Desactivar un proveedor")
+    @PreAuthorize(SUPPLIER_DEACTIVATE)
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Proveedor desactivado correctamente"),
             @ApiResponse(responseCode = "404", description = "Proveedor no encontrado")

@@ -6,12 +6,17 @@ import com.cgb.coffeegourmetb.dto.response.InventoryResponse;
 import com.cgb.coffeegourmetb.service.interfaces.InventoryService;
 import com.cgb.coffeegourmetb.util.constants.ApiPaths;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static com.cgb.coffeegourmetb.security.SecurityExpressions.INVENTORY_READ;
+import static com.cgb.coffeegourmetb.security.SecurityExpressions.INVENTORY_MOVEMENT_CREATE;
 
 @RestController
 @RequestMapping(ApiPaths.INVENTORY)
@@ -19,6 +24,7 @@ import java.util.List;
         name = "Inventario",
         description = "API para la gestión del inventario."
 )
+@SecurityRequirement(name = "bearerAuth")
 public class InventoryController {
 
     private final InventoryService service;
@@ -28,6 +34,7 @@ public class InventoryController {
     }
 
     @Operation(summary = "Consultar todo el inventario")
+    @PreAuthorize(INVENTORY_READ)
     @GetMapping
     public List<InventoryResponse> findAll() {
 
@@ -36,6 +43,7 @@ public class InventoryController {
     }
 
     @Operation(summary = "Consultar inventario por producto")
+    @PreAuthorize(INVENTORY_READ)
     @GetMapping(ApiPaths.INVENTORY_BY_PRODUCT)
     public InventoryResponse findByProduct(
             @PathVariable Long productId){
@@ -45,6 +53,7 @@ public class InventoryController {
     }
 
     @Operation(summary = "Consultar movimientos de un producto")
+    @PreAuthorize(INVENTORY_READ)
     @GetMapping(ApiPaths.INVENTORY_MOVEMENTS)
     public List<InventoryMovementResponse> movements(
             @PathVariable Long productId){
@@ -54,6 +63,7 @@ public class InventoryController {
     }
 
     @Operation(summary = "Registrar movimiento de inventario")
+    @PreAuthorize(INVENTORY_MOVEMENT_CREATE)
     @PostMapping(ApiPaths.INVENTORY_REGISTER_MOVEMENT)
     @ResponseStatus(HttpStatus.CREATED)
     public InventoryMovementResponse createMovement(

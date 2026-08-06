@@ -1,6 +1,6 @@
 package com.cgb.coffeegourmetb.service.interfaces;
 
-import com.cgb.coffeegourmetb.entity.MovementType;
+import com.cgb.coffeegourmetb.enums.MovementType;
 
 public interface InventoryTransactionService {
 

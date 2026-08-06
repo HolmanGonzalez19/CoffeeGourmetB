@@ -1,8 +1,7 @@
 package com.cgb.coffeegourmetb.dto.response;
 
-import com.cgb.coffeegourmetb.entity.ProductType;
+import com.cgb.coffeegourmetb.enums.ProductType;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class ProductResponse {

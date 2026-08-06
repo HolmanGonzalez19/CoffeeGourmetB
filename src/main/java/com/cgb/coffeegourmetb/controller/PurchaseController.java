@@ -8,13 +8,19 @@ import com.cgb.coffeegourmetb.util.constants.ApiPaths;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static com.cgb.coffeegourmetb.security.SecurityExpressions.PURCHASE_READ;
+import static com.cgb.coffeegourmetb.security.SecurityExpressions.PURCHASE_CREATE;
+import static com.cgb.coffeegourmetb.security.SecurityExpressions.PURCHASE_CANCEL;
 
 @RestController
 @RequestMapping(ApiPaths.PURCHASES)
@@ -22,6 +28,7 @@ import java.util.List;
         name = "Compras",
         description = "API para la gestión de compras realizadas a proveedores."
 )
+@SecurityRequirement(name = "bearerAuth")
 public class PurchaseController {
 
     private final PurchaseService purchaseService;
@@ -31,6 +38,7 @@ public class PurchaseController {
     }
 
     @Operation(summary = "Listar todas las compras")
+    @PreAuthorize(PURCHASE_READ)
     @GetMapping
     public List<PurchaseResponse> findAll() {
 
@@ -39,6 +47,7 @@ public class PurchaseController {
     }
 
     @Operation(summary = "Consultar una compra por ID")
+    @PreAuthorize(PURCHASE_READ)
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Compra encontrada"),
             @ApiResponse(responseCode = "404", description = "Compra no encontrada")
@@ -51,22 +60,8 @@ public class PurchaseController {
 
     }
 
-    @Operation(summary = "Registrar una nueva compra")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Compra registrada correctamente"),
-            @ApiResponse(responseCode = "400", description = "Información inválida"),
-            @ApiResponse(responseCode = "404", description = "Proveedor, usuario o producto no encontrado")
-    })
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public PurchaseResponse create(
-            @Valid @RequestBody CreatePurchaseRequest request) {
-
-        return purchaseService.create(request);
-
-    }
-
     @Operation(summary = "Consultar una compra por número de recibo")
+    @PreAuthorize(PURCHASE_READ)
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Compra encontrada"),
             @ApiResponse(responseCode = "404", description = "Compra no encontrada")
@@ -80,6 +75,7 @@ public class PurchaseController {
     }
 
     @Operation(summary = "Consultar compras de un proveedor")
+    @PreAuthorize(PURCHASE_READ)
     @GetMapping(ApiPaths.PURCHASES_BY_SUPPLIER)
     public List<PurchaseResponse> findBySupplier(
             @PathVariable Long supplierId) {
@@ -89,6 +85,7 @@ public class PurchaseController {
     }
 
     @Operation(summary = "Consultar compras registradas por un usuario")
+    @PreAuthorize(PURCHASE_READ)
     @GetMapping(ApiPaths.PURCHASES_BY_USER)
     public List<PurchaseResponse> findByUser(
             @PathVariable Long userId) {
@@ -98,6 +95,7 @@ public class PurchaseController {
     }
 
     @Operation(summary = "Consultar compras realizadas hoy")
+    @PreAuthorize(PURCHASE_READ)
     @GetMapping(ApiPaths.PURCHASES_TODAY)
     public List<PurchaseResponse> today() {
 
@@ -106,6 +104,7 @@ public class PurchaseController {
     }
 
     @Operation(summary = "Consultar compras del mes actual")
+    @PreAuthorize(PURCHASE_READ)
     @GetMapping(ApiPaths.PURCHASES_MONTH)
     public List<PurchaseResponse> month() {
 
@@ -114,6 +113,7 @@ public class PurchaseController {
     }
 
     @Operation(summary = "Consultar compras entre dos fechas")
+    @PreAuthorize(PURCHASE_READ)
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Consulta realizada correctamente")
     })
@@ -130,7 +130,24 @@ public class PurchaseController {
 
     }
 
+    @Operation(summary = "Registrar una nueva compra")
+    @PreAuthorize(PURCHASE_CREATE)
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Compra registrada correctamente"),
+            @ApiResponse(responseCode = "400", description = "Información inválida"),
+            @ApiResponse(responseCode = "404", description = "Proveedor, usuario o producto no encontrado")
+    })
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public PurchaseResponse create(
+            @Valid @RequestBody CreatePurchaseRequest request) {
+
+        return purchaseService.create(request);
+
+    }
+
     @Operation(summary = "Anular una compra")
+    @PreAuthorize(PURCHASE_CANCEL)
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Compra anulada correctamente"),
             @ApiResponse(responseCode = "400", description = "La compra no puede anularse"),

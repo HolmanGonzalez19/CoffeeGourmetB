@@ -1,6 +1,6 @@
 package com.cgb.coffeegourmetb.dto.response;
 
-import com.cgb.coffeegourmetb.entity.MovementType;
+import com.cgb.coffeegourmetb.enums.MovementType;
 
 import java.time.LocalDateTime;
 

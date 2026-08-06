@@ -1,6 +1,6 @@
 package com.cgb.coffeegourmetb.dto.request;
 
-import com.cgb.coffeegourmetb.entity.MovementType;
+import com.cgb.coffeegourmetb.enums.MovementType;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

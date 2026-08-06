@@ -1,4 +1,4 @@
-package com.cgb.coffeegourmetb.entity;
+package com.cgb.coffeegourmetb.enums;
 
 public enum ProductType {
 

@@ -8,16 +8,25 @@ import com.cgb.coffeegourmetb.util.constants.ApiPaths;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.cgb.coffeegourmetb.security.SecurityExpressions.PRODUCT_READ;
+import static com.cgb.coffeegourmetb.security.SecurityExpressions.PRODUCT_CREATE;
+import static com.cgb.coffeegourmetb.security.SecurityExpressions.PRODUCT_UPDATE;
+import static com.cgb.coffeegourmetb.security.SecurityExpressions.PRODUCT_ACTIVATE;
+import static com.cgb.coffeegourmetb.security.SecurityExpressions.PRODUCT_DEACTIVATE;
+
 @RestController
 @RequestMapping(ApiPaths.PRODUCTS)
 @Tag(name = "Productos", description = "API para la gestión de productos.")
+@SecurityRequirement(name = "bearerAuth")
 public class ProductController {
 
     private final ProductService service;
@@ -27,24 +36,28 @@ public class ProductController {
     }
 
     @Operation(summary = "Listar productos activos")
+    @PreAuthorize(PRODUCT_READ)
     @GetMapping
     public List<ProductResponse> findAll() {
         return service.findAll();
     }
 
     @Operation(summary = "Listar productos inactivos")
+    @PreAuthorize(PRODUCT_READ)
     @GetMapping(ApiPaths.PRODUCTS_INACTIVE)
     public List<ProductResponse> findAllInactive() {
         return service.findAllInactive();
     }
 
     @Operation(summary = "Consultar un producto por ID")
+    @PreAuthorize(PRODUCT_READ)
     @GetMapping(ApiPaths.PRODUCTS_BY_ID)
     public ProductResponse findById(@PathVariable Long id) {
         return service.findById(id);
     }
 
     @Operation(summary = "Crear un producto")
+    @PreAuthorize(PRODUCT_CREATE)
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Producto creado correctamente")
     })
@@ -57,6 +70,7 @@ public class ProductController {
     }
 
     @Operation(summary = "Actualizar un producto")
+    @PreAuthorize(PRODUCT_UPDATE)
     @PutMapping(ApiPaths.PRODUCTS_BY_ID)
     public ProductResponse update(
             @PathVariable Long id,
@@ -66,6 +80,7 @@ public class ProductController {
     }
 
     @Operation(summary = "Activar un producto")
+    @PreAuthorize(PRODUCT_ACTIVATE)
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Producto activado correctamente"),
             @ApiResponse(responseCode = "404", description = "Producto no encontrado")
@@ -77,6 +92,7 @@ public class ProductController {
     }
 
     @Operation(summary = "Desactivar un producto")
+    @PreAuthorize(PRODUCT_DEACTIVATE)
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Producto desactivado correctamente"),
             @ApiResponse(responseCode = "404", description = "Producto no encontrado")

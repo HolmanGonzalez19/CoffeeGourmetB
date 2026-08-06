@@ -2,14 +2,12 @@ package com.cgb.coffeegourmetb.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
-/**
- * Entidad que representa los roles del sistema.
- *
- * Corresponde a la tabla coffeegourmet.roles.
- *
- */
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "roles", schema = "coffeegourmet")
 public class Role extends BaseStatusEntity {
@@ -19,6 +17,9 @@ public class Role extends BaseStatusEntity {
 
     @Column(name = "descripcion", length = 255)
     private String descripcion;
+
+    @OneToMany(mappedBy = "role")
+    private List<RolePermission> rolePermissions = new ArrayList<>();
 
     public Role() {
     }
@@ -39,4 +40,11 @@ public class Role extends BaseStatusEntity {
         this.descripcion = descripcion;
     }
 
+    public List<RolePermission> getRolePermissions() {
+        return rolePermissions;
+    }
+
+    public void setRolePermissions(List<RolePermission> rolePermissions) {
+        this.rolePermissions = rolePermissions;
+    }
 }

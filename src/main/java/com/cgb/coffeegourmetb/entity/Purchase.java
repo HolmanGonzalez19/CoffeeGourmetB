@@ -1,5 +1,6 @@
 package com.cgb.coffeegourmetb.entity;
 
+import com.cgb.coffeegourmetb.enums.PurchaseStatus;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
