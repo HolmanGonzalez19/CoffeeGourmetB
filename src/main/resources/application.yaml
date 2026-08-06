@@ -4,17 +4,25 @@ spring:
 
   datasource:
     url: jdbc:postgresql://localhost:5432/CoffeeGourmet?currentSchema=coffeegourmet
-    username: postgres
+    username: postgres # Ajuste Priduccion: Se debe cambiar a una variable de entorno
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
       ddl-auto: validate
-    show-sql: true
+    show-sql: true # Ajuste Priduccion: para produccion fasle, para pruebas true
     properties:
       hibernate:
-        format_sql: true
+        format_sql: true # Ajuste Priduccion: para produccion fasle, para pruebas true
         default_schema: coffeegourmet
 server:
   port: 8080
+
+security:
+   jwt:
+     secret: CoffeeGourmetSecretKey2026VerySecureForJwtAuthenticationSystem
+     # Ajuste Priduccion: secret debe ir en un variable de entorno
+
+     expiration: 3600000
+     # Ajuste Priduccion: la expiracion debe ir en un variable de entorno, verificar como es mejor utilizar

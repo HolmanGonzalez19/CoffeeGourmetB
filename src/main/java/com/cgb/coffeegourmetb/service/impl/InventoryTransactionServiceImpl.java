@@ -1,11 +1,10 @@
 package com.cgb.coffeegourmetb.service.impl;
 
-import com.cgb.coffeegourmetb.entity.MovementType;
+import com.cgb.coffeegourmetb.enums.MovementType;
 import com.cgb.coffeegourmetb.service.interfaces.InventoryTransactionService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import com.cgb.coffeegourmetb.entity.InventoryMovement;
-import com.cgb.coffeegourmetb.entity.MovementType;
 import com.cgb.coffeegourmetb.entity.Product;
 import com.cgb.coffeegourmetb.entity.User;
 import com.cgb.coffeegourmetb.exception.BusinessException;

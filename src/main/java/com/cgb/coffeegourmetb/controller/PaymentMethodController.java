@@ -8,12 +8,20 @@ import com.cgb.coffeegourmetb.util.constants.ApiPaths;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
+
+import static com.cgb.coffeegourmetb.security.SecurityExpressions.PAYMENT_METHOD_READ;
+import static com.cgb.coffeegourmetb.security.SecurityExpressions.PAYMENT_METHOD_CREATE;
+import static com.cgb.coffeegourmetb.security.SecurityExpressions.PAYMENT_METHOD_UPDATE;
+import static com.cgb.coffeegourmetb.security.SecurityExpressions.PAYMENT_METHOD_ACTIVATE;
+import static com.cgb.coffeegourmetb.security.SecurityExpressions.PAYMENT_METHOD_DEACTIVATE;
 
 /**
  * Controlador encargado de la gestión de métodos de pago.
@@ -21,6 +29,7 @@ import java.util.List;
 @RestController
 @RequestMapping(ApiPaths.PAYMENT_METHODS)
 @Tag(name = "Métodos de Pago", description = "API para la gestión de métodos de pago.")
+@SecurityRequirement(name = "bearerAuth")
 public class PaymentMethodController {
 
     private final PaymentMethodService service;
@@ -35,6 +44,7 @@ public class PaymentMethodController {
      * @return Lista de métodos de pago activos.
      */
     @Operation(summary = "Listar métodos de pago activos")
+    @PreAuthorize(PAYMENT_METHOD_READ)
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Listado obtenido correctamente")
     })
@@ -49,6 +59,7 @@ public class PaymentMethodController {
      * @return Lista de métodos de pago inactivos.
      */
     @Operation(summary = "Listar métodos de pago inactivos")
+    @PreAuthorize(PAYMENT_METHOD_READ)
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Listado obtenido correctamente")
     })
@@ -64,6 +75,7 @@ public class PaymentMethodController {
      * @return Método de pago encontrado.
      */
     @Operation(summary = "Consultar un método de pago por ID")
+    @PreAuthorize(PAYMENT_METHOD_READ)
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Método de pago encontrado"),
             @ApiResponse(responseCode = "404", description = "Método de pago no encontrado")
@@ -80,6 +92,7 @@ public class PaymentMethodController {
      * @return Método de pago creado.
      */
     @Operation(summary = "Crear un nuevo método de pago")
+    @PreAuthorize(PAYMENT_METHOD_CREATE)
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Método de pago creado correctamente"),
             @ApiResponse(responseCode = "400", description = "Datos inválidos")
@@ -98,6 +111,7 @@ public class PaymentMethodController {
      * @return Método de pago actualizado.
      */
     @Operation(summary = "Actualizar un método de pago")
+    @PreAuthorize(PAYMENT_METHOD_UPDATE)
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Método de pago actualizado correctamente"),
             @ApiResponse(responseCode = "400", description = "Datos inválidos"),
@@ -116,6 +130,7 @@ public class PaymentMethodController {
      * @param id Identificador del método de pago.
      */
     @Operation(summary = "Activar un método de pago")
+    @PreAuthorize(PAYMENT_METHOD_ACTIVATE)
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Método de pago activado correctamente"),
             @ApiResponse(responseCode = "404", description = "Método de pago no encontrado")
@@ -132,6 +147,7 @@ public class PaymentMethodController {
      * @param id Identificador del método de pago.
      */
     @Operation(summary = "Desactivar un método de pago")
+    @PreAuthorize(PAYMENT_METHOD_DEACTIVATE)
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Método de pago desactivado correctamente"),
             @ApiResponse(responseCode = "404", description = "Método de pago no encontrado")

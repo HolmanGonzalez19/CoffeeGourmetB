@@ -1,5 +1,6 @@
 package com.cgb.coffeegourmetb.entity;
 
+import com.cgb.coffeegourmetb.enums.SaleStatus;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -41,6 +42,10 @@ public class Sale extends BaseAuditEntity {
 
     @Column(name = "motivo_anulacion", length = 500)
     private String motivoAnulacion;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "caja_id", nullable = false)
+    private CashRegister caja;
 
     @OneToMany(
             mappedBy = "venta",
@@ -131,4 +136,9 @@ public class Sale extends BaseAuditEntity {
     public void setDetalles(List<SaleDetail> detalles) {
         this.detalles = detalles;
     }
+
+    public CashRegister getCaja() { return caja; }
+
+    public void setCaja(CashRegister caja) { this.caja = caja; }
+
 }

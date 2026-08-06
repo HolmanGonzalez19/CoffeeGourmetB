@@ -1,9 +1,7 @@
 package com.cgb.coffeegourmetb.dto.request;
 
-import com.cgb.coffeegourmetb.entity.ProductType;
+import com.cgb.coffeegourmetb.enums.ProductType;
 import jakarta.validation.constraints.*;
-
-import java.math.BigDecimal;
 
 public class UpdateProductRequest {
 

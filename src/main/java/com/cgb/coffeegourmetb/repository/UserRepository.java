@@ -12,6 +12,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByUsuario(String usuario);
 
+    Optional<User> findByUsuarioAndActivoTrue(String usuario);
+
     boolean existsByUsuario(String usuario);
 
     boolean existsByUsuarioAndIdNot(String usuario, Long id);
@@ -19,5 +21,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByActivoTrue();
 
     List<User> findByActivoFalse();
-
 }

@@ -19,6 +19,9 @@ public class User extends BaseStatusEntity {
     @Column(name = "password_hash", nullable = false, length = 255)
     private String passwordHash;
 
+    @Column(name = "pin_hash", length = 255)
+    private String pinHash;
+
     public User() {
     }
 
@@ -54,4 +57,7 @@ public class User extends BaseStatusEntity {
         this.passwordHash = passwordHash;
     }
 
+    public String getPinHash() { return pinHash; }
+
+    public void setPinHash(String pinHash) { this.pinHash = pinHash; }
 }

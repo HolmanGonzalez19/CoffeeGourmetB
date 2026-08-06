@@ -1,4 +1,5 @@
 package com.cgb.coffeegourmetb.entity;
+import com.cgb.coffeegourmetb.enums.ProductType;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 

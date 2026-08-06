@@ -1,5 +1,6 @@
 package com.cgb.coffeegourmetb.entity;
 
+import com.cgb.coffeegourmetb.enums.MovementType;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
