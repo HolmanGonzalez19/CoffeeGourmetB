@@ -41,7 +41,7 @@ public class CashRegisterController {
     })
     @PostMapping(ApiPaths.CASH_REGISTER_OPEN)
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize(SecurityExpressions.CASH_REGISTER_OPEN)
+    @PreAuthorize(SecurityExpressions.PERMISSION_OPERAR_CAJA)
     public CashRegisterResponse open(
             @Valid
             @RequestBody

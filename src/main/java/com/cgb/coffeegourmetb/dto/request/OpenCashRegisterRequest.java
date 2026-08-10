@@ -8,21 +8,10 @@ import java.math.BigDecimal;
 public class OpenCashRegisterRequest {
 
     @NotNull
-    private Long usuarioAperturaId;
-
-    @NotNull
-    @DecimalMin("0.00")
+    @DecimalMin(value = "0.0")
     private BigDecimal montoInicial;
 
     public OpenCashRegisterRequest() {
-    }
-
-    public Long getUsuarioAperturaId() {
-        return usuarioAperturaId;
-    }
-
-    public void setUsuarioAperturaId(Long usuarioAperturaId) {
-        this.usuarioAperturaId = usuarioAperturaId;
     }
 
     public BigDecimal getMontoInicial() {

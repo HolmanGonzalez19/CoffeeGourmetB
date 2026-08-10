@@ -3,6 +3,7 @@ package com.cgb.coffeegourmetb.service.interfaces;
 import com.cgb.coffeegourmetb.dto.request.CreateProductRequest;
 import com.cgb.coffeegourmetb.dto.request.UpdateProductRequest;
 import com.cgb.coffeegourmetb.dto.response.ProductResponse;
+import com.cgb.coffeegourmetb.dto.response.ProductPosResponse;
 
 import java.util.List;
 
@@ -24,6 +25,11 @@ public interface ProductService {
     ProductResponse findById(Long id);
 
     /**
+     * Obtiene el catálogo de productos activos con su precio de venta vigente.
+     */
+    List<ProductPosResponse> findAllForPos();
+
+    /**
      * Crea un producto.
      */
     ProductResponse create(CreateProductRequest request);
@@ -42,5 +48,4 @@ public interface ProductService {
      * Desactiva un producto.
      */
     void deactivate(Long id);
-
 }

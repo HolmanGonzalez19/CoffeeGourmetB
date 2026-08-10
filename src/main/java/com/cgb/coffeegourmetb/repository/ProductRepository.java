@@ -3,6 +3,7 @@ package com.cgb.coffeegourmetb.repository;
 import com.cgb.coffeegourmetb.entity.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import com.cgb.coffeegourmetb.dto.response.ProductPosResponse;
 
 import java.util.List;
 import java.util.Optional;
@@ -44,5 +45,38 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     ORDER BY p.nombre
     """)
     List<Product> productosSinVentas();
+
+    @Query("""
+        SELECT p
+        FROM Product p
+        LEFT JOIN FETCH PriceHistory ph
+            ON ph.producto = p
+            AND ph.activo = true
+        WHERE p.activo = true
+        ORDER BY p.nombre
+    """)
+    List<Product> findAllActiveWithCurrentPrice();
+
+    @Query("""
+        SELECT new com.cgb.coffeegourmetb.dto.response.ProductPosResponse(
+                p.id,
+                p.codigo,
+                p.codigoBarras,
+                p.nombre,
+                c.id,
+                c.nombre,
+                p.tipoProducto,
+                ph.precioVenta
+            )
+            FROM Product p
+            JOIN p.categoria c
+            JOIN PriceHistory ph
+                ON ph.producto = p
+                AND ph.activo = true
+                AND ph.precioVenta > 0
+            WHERE p.activo = true
+            ORDER BY p.nombre
+    """)
+    List<ProductPosResponse> findAllForPos();
 
 }

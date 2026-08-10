@@ -25,7 +25,7 @@ public final class ApiMessages {
     public static final String CASH_REGISTER_ALREADY_OPEN = "Ya existe una caja abierta.";
     public static final String CASH_REGISTER_ALREADY_CLOSED = "La caja ya fue cerrada.";
     public static final String CASH_REGISTER_NOT_OPEN = "No existe una caja abierta.";
-    public static final String CASH_REGISTER_OPENED = "Caja abierta correctamente.";
+    public static final String CASH_REGISTER_OPEN = "Caja abierta correctamente.";
     public static final String CASH_REGISTER_CLOSED_SUCCESS = "Caja cerrada correctamente.";
 
     // =========================================================

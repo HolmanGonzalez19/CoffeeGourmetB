@@ -36,7 +36,6 @@ public class UserController {
     }
 
     @Operation(summary = "Listar usuarios activos")
-    @PreAuthorize(USER_READ)
     @GetMapping
     public List<UserResponse> findAll() {
         return service.findAll();

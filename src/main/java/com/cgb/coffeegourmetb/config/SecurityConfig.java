@@ -48,6 +48,17 @@ public class SecurityConfig {
                                 "/api/auth/**"
                         ).permitAll()
 
+                        .requestMatchers(
+                                org.springframework.http.HttpMethod.GET,
+                                "/api/products",
+                                "/api/users"
+                        ).permitAll()
+
+                        .requestMatchers(
+                                org.springframework.http.HttpMethod.GET,
+                                "/api/products/*"
+                        ).permitAll()
+
                         .anyRequest().authenticated()
                 )
 

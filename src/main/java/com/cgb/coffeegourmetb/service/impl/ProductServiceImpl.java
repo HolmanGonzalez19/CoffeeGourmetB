@@ -13,6 +13,7 @@ import com.cgb.coffeegourmetb.repository.CategoryRepository;
 import com.cgb.coffeegourmetb.repository.InventoryRepository;
 import com.cgb.coffeegourmetb.repository.ProductRepository;
 import com.cgb.coffeegourmetb.service.interfaces.ProductService;
+import com.cgb.coffeegourmetb.dto.response.ProductPosResponse;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -162,6 +163,12 @@ public class ProductServiceImpl implements ProductService {
         product.setActivo(false);
 
         productRepository.save(product);
+    }
+
+    @Override
+    public List<ProductPosResponse> findAllForPos() {
+
+        return productRepository.findAllForPos();
     }
 
 

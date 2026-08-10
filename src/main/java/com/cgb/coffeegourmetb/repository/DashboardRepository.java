@@ -74,4 +74,26 @@ public interface DashboardRepository
         WHERE i.cantidadActual <= i.producto.stockMinimo
         """)
     Long productosStockBajo();
+
+    @Query("""
+    SELECT COUNT(s)
+    FROM Sale s
+    WHERE s.estado = com.cgb.coffeegourmetb.enums.SaleStatus.REGISTRADA
+    AND s.fechaHora BETWEEN :inicio AND :fin
+    """)
+    Long cantidadVentasHoy(
+            LocalDateTime inicio,
+            LocalDateTime fin
+    );
+
+    @Query("""
+    SELECT COALESCE(SUM(sd.cantidad),0)
+    FROM SaleDetail sd
+    WHERE sd.venta.estado = com.cgb.coffeegourmetb.enums.SaleStatus.REGISTRADA
+    AND sd.venta.fechaHora BETWEEN :inicio AND :fin
+    """)
+    Long cantidadProductosVendidosHoy(
+            LocalDateTime inicio,
+            LocalDateTime fin
+    );
 }

@@ -3,6 +3,7 @@ package com.cgb.coffeegourmetb.controller;
 import com.cgb.coffeegourmetb.dto.request.CreateProductRequest;
 import com.cgb.coffeegourmetb.dto.request.UpdateProductRequest;
 import com.cgb.coffeegourmetb.dto.response.ProductResponse;
+import com.cgb.coffeegourmetb.dto.response.ProductPosResponse;
 import com.cgb.coffeegourmetb.service.interfaces.ProductService;
 import com.cgb.coffeegourmetb.util.constants.ApiPaths;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,7 +37,6 @@ public class ProductController {
     }
 
     @Operation(summary = "Listar productos activos")
-    @PreAuthorize(PRODUCT_READ)
     @GetMapping
     public List<ProductResponse> findAll() {
         return service.findAll();
@@ -50,7 +50,6 @@ public class ProductController {
     }
 
     @Operation(summary = "Consultar un producto por ID")
-    @PreAuthorize(PRODUCT_READ)
     @GetMapping(ApiPaths.PRODUCTS_BY_ID)
     public ProductResponse findById(@PathVariable Long id) {
         return service.findById(id);
@@ -103,4 +102,9 @@ public class ProductController {
         service.deactivate(id);
     }
 
+    @Operation(summary = "Listar catálogo de productos para POS")
+    @GetMapping("/pos")
+    public List<ProductPosResponse> findAllForPos() {
+        return service.findAllForPos();
+    }
 }

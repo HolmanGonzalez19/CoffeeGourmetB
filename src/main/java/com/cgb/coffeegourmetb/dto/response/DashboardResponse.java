@@ -7,9 +7,22 @@ public class DashboardResponse {
     private Long ventasHoy;
     private BigDecimal totalVentasHoy;
     private Long productosVendidosHoy;
+
     private Long cajaAbiertaId;
     private BigDecimal efectivoInicial;
     private BigDecimal efectivoEsperado;
+
+    private Long productosStockBajo;
+
+    // Indicadores generales
+
+    private Long totalVentas;
+    private BigDecimal totalIngresos;
+
+    private Long totalCompras;
+    private BigDecimal totalEgresos;
+
+    private Long totalProductos;
 
     public DashboardResponse() {
     }
@@ -60,5 +73,53 @@ public class DashboardResponse {
 
     public void setEfectivoEsperado(BigDecimal efectivoEsperado) {
         this.efectivoEsperado = efectivoEsperado;
+    }
+
+    public Long getProductosStockBajo() {
+        return productosStockBajo;
+    }
+
+    public void setProductosStockBajo(Long productosStockBajo) {
+        this.productosStockBajo = productosStockBajo;
+    }
+
+    public Long getTotalVentas() {
+        return totalVentas;
+    }
+
+    public void setTotalVentas(Long totalVentas) {
+        this.totalVentas = totalVentas;
+    }
+
+    public BigDecimal getTotalIngresos() {
+        return totalIngresos;
+    }
+
+    public void setTotalIngresos(BigDecimal totalIngresos) {
+        this.totalIngresos = totalIngresos;
+    }
+
+    public Long getTotalCompras() {
+        return totalCompras;
+    }
+
+    public void setTotalCompras(Long totalCompras) {
+        this.totalCompras = totalCompras;
+    }
+
+    public BigDecimal getTotalEgresos() {
+        return totalEgresos;
+    }
+
+    public void setTotalEgresos(BigDecimal totalEgresos) {
+        this.totalEgresos = totalEgresos;
+    }
+
+    public Long getTotalProductos() {
+        return totalProductos;
+    }
+
+    public void setTotalProductos(Long totalProductos) {
+        this.totalProductos = totalProductos;
     }
 }

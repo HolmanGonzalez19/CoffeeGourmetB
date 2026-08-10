@@ -58,6 +58,30 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
     );
 
     @Query("""
+        SELECT COALESCE(SUM(s.total), 0)
+        FROM Sale s
+        WHERE s.caja = :caja
+        AND s.estado =
+            com.cgb.coffeegourmetb.enums.SaleStatus.REGISTRADA
+        AND s.metodoPago.nombre = :metodoPago
+    """)
+    BigDecimal sumTotalByCajaAndPaymentMethod(
+            @Param("caja") CashRegister caja,
+            @Param("metodoPago") String metodoPago
+    );
+
+    @Query("""
+        SELECT COALESCE(SUM(s.total), 0)
+        FROM Sale s
+        WHERE s.caja = :caja
+        AND s.estado =
+            com.cgb.coffeegourmetb.enums.SaleStatus.REGISTRADA
+    """)
+    BigDecimal sumTotalRegisteredByCaja(
+            @Param("caja") CashRegister caja
+    );
+
+    @Query("""
         SELECT
             s.metodoPago.nombre,
             SUM(s.total)
@@ -118,4 +142,38 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
             com.cgb.coffeegourmetb.enums.SaleStatus.REGISTRADA
     """)
     BigDecimal totalSalesAmount();
+
+
+    @Query("""
+    SELECT COUNT(s)
+    FROM Sale s
+    WHERE s.estado = com.cgb.coffeegourmetb.enums.SaleStatus.REGISTRADA
+    AND s.fechaHora BETWEEN :inicio AND :fin
+    """)
+    Long countVentasRegistradas(
+            @Param("inicio") LocalDateTime inicio,
+            @Param("fin") LocalDateTime fin
+    );
+
+    @Query("""
+    SELECT COALESCE(SUM(s.total),0)
+    FROM Sale s
+    WHERE s.estado = com.cgb.coffeegourmetb.enums.SaleStatus.REGISTRADA
+    AND s.fechaHora BETWEEN :inicio AND :fin
+    """)
+    BigDecimal totalVentasRegistradas(
+            @Param("inicio") LocalDateTime inicio,
+            @Param("fin") LocalDateTime fin
+    );
+
+    @Query("""
+    SELECT COUNT(s)
+    FROM Sale s
+    WHERE s.estado = com.cgb.coffeegourmetb.enums.SaleStatus.REGISTRADA
+    AND s.fechaHora BETWEEN :inicio AND :fin
+    """)
+    Long countVentasHoy(
+            @Param("inicio") LocalDateTime inicio,
+            @Param("fin") LocalDateTime fin
+    );
 }

@@ -3,60 +3,75 @@ package com.cgb.coffeegourmetb.service.impl;
 import com.cgb.coffeegourmetb.dto.response.DashboardResponse;
 import com.cgb.coffeegourmetb.entity.CashRegister;
 import com.cgb.coffeegourmetb.enums.CashRegisterStatus;
-import com.cgb.coffeegourmetb.repository.CashMovementRepository;
 import com.cgb.coffeegourmetb.repository.CashRegisterRepository;
+import com.cgb.coffeegourmetb.repository.DashboardRepository;
 import com.cgb.coffeegourmetb.repository.SaleDetailRepository;
 import com.cgb.coffeegourmetb.repository.SaleRepository;
 import com.cgb.coffeegourmetb.service.interfaces.DashboardService;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
-@Transactional(readOnly = true)
 public class DashboardServiceImpl
         implements DashboardService {
 
+    private final DashboardRepository dashboardRepository;
+    private final CashRegisterRepository cashRegisterRepository;
     private final SaleRepository saleRepository;
     private final SaleDetailRepository saleDetailRepository;
-    private final CashRegisterRepository cashRegisterRepository;
-    private final CashMovementRepository cashMovementRepository;
 
     public DashboardServiceImpl(
-            SaleRepository saleRepository,
-            SaleDetailRepository saleDetailRepository,
+            DashboardRepository dashboardRepository,
             CashRegisterRepository cashRegisterRepository,
-            CashMovementRepository cashMovementRepository) {
+            SaleRepository saleRepository,
+            SaleDetailRepository saleDetailRepository) {
 
+        this.dashboardRepository = dashboardRepository;
+        this.cashRegisterRepository = cashRegisterRepository;
         this.saleRepository = saleRepository;
         this.saleDetailRepository = saleDetailRepository;
-        this.cashRegisterRepository = cashRegisterRepository;
-        this.cashMovementRepository = cashMovementRepository;
     }
 
     @Override
-    public DashboardResponse getDashboard() {
+    public DashboardResponse obtenerDashboard() {
 
-        LocalDate hoy = LocalDate.now();
+        DashboardResponse response = new DashboardResponse();
 
-        LocalDateTime inicio = hoy.atStartOfDay();
+        LocalDateTime inicio =
+                LocalDate.now().atStartOfDay();
 
-        LocalDateTime fin = hoy.plusDays(1)
-                .atStartOfDay();
+        LocalDateTime fin =
+                LocalDate.now().atTime(23,59,59);
 
-        DashboardResponse response =
-                new DashboardResponse();
+        response.setTotalVentas(
+                dashboardRepository.totalVentas());
 
-        response.setVentasHoy(
-                saleRepository.countSales(
+        response.setTotalIngresos(
+                dashboardRepository.totalIngresos());
+
+        response.setTotalCompras(
+                dashboardRepository.totalCompras());
+
+        response.setTotalEgresos(
+                dashboardRepository.totalEgresos());
+
+        response.setTotalProductos(
+                dashboardRepository.totalProductos());
+
+        response.setProductosStockBajo(
+                dashboardRepository.productosStockBajo());
+
+        response.setTotalVentasHoy(
+                dashboardRepository.totalVentasHoy(
                         inicio,
                         fin));
 
-        response.setTotalVentasHoy(
-                saleRepository.totalSales(
+        response.setVentasHoy(
+                saleRepository.countVentasHoy(
                         inicio,
                         fin));
 
@@ -65,37 +80,34 @@ public class DashboardServiceImpl
                         inicio,
                         fin));
 
-        cashRegisterRepository
-                .findByEstado(
-                        CashRegisterStatus.ABIERTA)
-                .ifPresent(caja -> llenarDatosCaja(
-                        caja,
-                        response));
+        Optional<CashRegister> caja =
+                cashRegisterRepository.findByEstado(
+                        CashRegisterStatus.ABIERTA);
 
-        return response;
-    }
+        if (caja.isPresent()) {
 
-    private void llenarDatosCaja(
-            CashRegister caja,
-            DashboardResponse response) {
+            CashRegister actual = caja.get();
 
-        response.setCajaAbiertaId(
-                caja.getId());
+            response.setCajaAbiertaId(
+                    actual.getId());
 
-        response.setEfectivoInicial(
-                caja.getMontoInicial());
+            response.setEfectivoInicial(
+                    actual.getMontoInicial());
 
-        BigDecimal ventas =
-                saleRepository.sumTotalByCaja(
-                        caja);
+            response.setEfectivoEsperado(
+                    actual.getEfectivoEsperado());
+        } else {
 
-        if (ventas == null) {
-            ventas = BigDecimal.ZERO;
+            response.setCajaAbiertaId(null);
+
+            response.setEfectivoInicial(
+                    BigDecimal.ZERO);
+
+            response.setEfectivoEsperado(
+                    BigDecimal.ZERO);
         }
 
-        response.setEfectivoEsperado(
-                caja.getMontoInicial()
-                        .add(ventas));
+        return response;
     }
 
 }

@@ -32,6 +32,12 @@ public class CashRegisterResponse {
 
     private BigDecimal diferencia;
 
+    private BigDecimal ventasEfectivo;
+
+    private BigDecimal ventasTransferencia;
+
+    private BigDecimal ventasTotales;
+
     public CashRegisterResponse() {
     }
 
@@ -129,5 +135,29 @@ public class CashRegisterResponse {
 
     public void setDiferencia(BigDecimal diferencia) {
         this.diferencia = diferencia;
+    }
+
+    public BigDecimal getVentasEfectivo() {
+        return ventasEfectivo;
+    }
+
+    public void setVentasEfectivo(BigDecimal ventasEfectivo) {
+        this.ventasEfectivo = ventasEfectivo;
+    }
+
+    public BigDecimal getVentasTransferencia() {
+        return ventasTransferencia;
+    }
+
+    public void setVentasTransferencia(BigDecimal ventasTransferencia) {
+        this.ventasTransferencia = ventasTransferencia;
+    }
+
+    public BigDecimal getVentasTotales() {
+        return ventasTotales;
+    }
+
+    public void setVentasTotales(BigDecimal ventasTotales) {
+        this.ventasTotales = ventasTotales;
     }
 }

@@ -4,6 +4,6 @@ import com.cgb.coffeegourmetb.dto.response.DashboardResponse;
 
 public interface DashboardService {
 
-    DashboardResponse getDashboard();
+    DashboardResponse obtenerDashboard();
 
 }

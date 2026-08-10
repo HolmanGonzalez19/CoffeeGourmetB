@@ -166,4 +166,5 @@ public final class ApiPaths {
      * ========================== */
 
     public static final String STATISTICS = API + "/statistics";
+
 }

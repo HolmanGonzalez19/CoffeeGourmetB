@@ -5,23 +5,26 @@ import com.cgb.coffeegourmetb.dto.request.OpenCashRegisterRequest;
 import com.cgb.coffeegourmetb.dto.response.CashRegisterResponse;
 import com.cgb.coffeegourmetb.entity.CashRegister;
 import com.cgb.coffeegourmetb.entity.User;
+import com.cgb.coffeegourmetb.enums.CashMovementType;
 import com.cgb.coffeegourmetb.enums.CashRegisterStatus;
 import com.cgb.coffeegourmetb.exception.BusinessException;
 import com.cgb.coffeegourmetb.exception.ResourceNotFoundException;
 import com.cgb.coffeegourmetb.mapper.CashRegisterMapper;
+import com.cgb.coffeegourmetb.repository.CashMovementRepository;
 import com.cgb.coffeegourmetb.repository.CashRegisterRepository;
+import com.cgb.coffeegourmetb.repository.SaleRepository;
 import com.cgb.coffeegourmetb.repository.UserRepository;
 import com.cgb.coffeegourmetb.service.interfaces.CashRegisterService;
 import com.cgb.coffeegourmetb.util.constants.ApiMessages;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.cgb.coffeegourmetb.enums.CashMovementType;
-import com.cgb.coffeegourmetb.repository.CashMovementRepository;
-import com.cgb.coffeegourmetb.repository.SaleRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -59,12 +62,7 @@ public class CashRegisterServiceImpl
                     ApiMessages.CASH_REGISTER_ALREADY_OPEN);
         }
 
-        User usuario =
-                userRepository.findById(
-                                request.getUsuarioAperturaId())
-                        .orElseThrow(() ->
-                                new ResourceNotFoundException(
-                                        "Usuario no encontrado."));
+        User usuario = obtenerUsuarioAutenticado();
 
         CashRegister caja =
                 new CashRegister();
@@ -73,10 +71,11 @@ public class CashRegisterServiceImpl
         caja.setFechaApertura(LocalDateTime.now());
         caja.setMontoInicial(request.getMontoInicial());
         caja.setEstado(CashRegisterStatus.ABIERTA);
+        caja.setEfectivoEsperado(request.getMontoInicial());
 
         repository.save(caja);
 
-        return mapper.toResponse(caja);
+        return construirRespuesta(caja);
     }
 
     @Override
@@ -108,14 +107,16 @@ public class CashRegisterServiceImpl
                 saleRepository.sumTotalByCaja(caja);
 
         BigDecimal ingresos =
-                cashMovementRepository.sumMontoByCajaAndTipoMovimiento(
-                        caja,
-                        CashMovementType.INGRESO);
+                cashMovementRepository
+                        .sumMontoByCajaAndTipoMovimiento(
+                                caja,
+                                CashMovementType.INGRESO);
 
         BigDecimal retiros =
-                cashMovementRepository.sumMontoByCajaAndTipoMovimiento(
-                        caja,
-                        CashMovementType.RETIRO);
+                cashMovementRepository
+                        .sumMontoByCajaAndTipoMovimiento(
+                                caja,
+                                CashMovementType.RETIRO);
 
         BigDecimal efectivoEsperado =
                 caja.getMontoInicial()
@@ -138,7 +139,7 @@ public class CashRegisterServiceImpl
 
         repository.save(caja);
 
-        return mapper.toResponse(caja);
+        return construirRespuesta(caja);
     }
 
     @Override
@@ -152,7 +153,7 @@ public class CashRegisterServiceImpl
                                 new ResourceNotFoundException(
                                         ApiMessages.CASH_REGISTER_NOT_OPEN));
 
-        return mapper.toResponse(caja);
+        return construirRespuesta(caja);
     }
 
     @Override
@@ -166,7 +167,7 @@ public class CashRegisterServiceImpl
                                 new ResourceNotFoundException(
                                         ApiMessages.CASH_REGISTER_NOT_FOUND));
 
-        return mapper.toResponse(caja);
+        return construirRespuesta(caja);
     }
 
     @Override
@@ -176,7 +177,7 @@ public class CashRegisterServiceImpl
         return repository
                 .findAllByOrderByFechaAperturaDesc()
                 .stream()
-                .map(mapper::toResponse)
+                .map(this::construirRespuesta)
                 .toList();
     }
 
@@ -188,8 +189,68 @@ public class CashRegisterServiceImpl
                 .findByEstadoOrderByFechaAperturaDesc(
                         CashRegisterStatus.CERRADA)
                 .stream()
-                .map(mapper::toResponse)
+                .map(this::construirRespuesta)
                 .toList();
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<CashRegister> obtenerCajaAbierta() {
+
+        return repository.findByEstado(
+                CashRegisterStatus.ABIERTA);
+    }
+
+    /**
+     * Obtiene el usuario autenticado actualmente
+     * a partir del contexto de Spring Security.
+     */
+
+    private User obtenerUsuarioAutenticado() {
+
+        Authentication authentication =
+                SecurityContextHolder
+                        .getContext()
+                        .getAuthentication();
+
+        if (authentication == null ||
+                !authentication.isAuthenticated()) {
+
+            throw new BusinessException(
+                    "Usuario no autenticado.");
+        }
+
+        String username = authentication.getName();
+
+        return userRepository
+                .findByUsuarioAndActivoTrue(username)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Usuario autenticado no encontrado."));
+    }
+
+    private CashRegisterResponse construirRespuesta(CashRegister caja) {
+
+        CashRegisterResponse response =
+                mapper.toResponse(caja);
+
+        BigDecimal ventasEfectivo =
+                saleRepository.sumTotalByCajaAndPaymentMethod(
+                        caja,
+                        "EFECTIVO");
+
+        BigDecimal ventasTransferencia =
+                saleRepository.sumTotalByCajaAndPaymentMethod(
+                        caja,
+                        "TRANSFERENCIA");
+
+        BigDecimal ventasTotales =
+                saleRepository.sumTotalRegisteredByCaja(caja);
+
+        response.setVentasEfectivo(ventasEfectivo);
+        response.setVentasTransferencia(ventasTransferencia);
+        response.setVentasTotales(ventasTotales);
+
+        return response;
+    }
 }

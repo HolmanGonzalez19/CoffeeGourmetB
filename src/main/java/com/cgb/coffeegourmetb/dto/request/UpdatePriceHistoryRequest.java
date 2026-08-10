@@ -16,7 +16,11 @@ public class UpdatePriceHistoryRequest {
     private BigDecimal precioCompra;
 
     @NotNull(message = "El precio de venta es obligatorio.")
-    @DecimalMin(value = "0.00", inclusive = true)
+    @DecimalMin(
+            value = "0.01",
+            inclusive = true,
+            message = "El precio de venta debe ser mayor que cero."
+    )
     private BigDecimal precioVenta;
 
     @NotNull(message = "La fecha de inicio es obligatoria.")

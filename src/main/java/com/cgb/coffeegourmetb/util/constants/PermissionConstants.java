@@ -72,6 +72,9 @@ public final class PermissionConstants {
     public static final String PERMISSION_DEACTIVATE =
             "PERMISSION_DEACTIVATE";
 
+    public static final String PERMISSION_OPERAR_CAJA =
+            "OPERAR_CAJA";
+
 
     // =========================================================
     // PERMISOS DE ROLES

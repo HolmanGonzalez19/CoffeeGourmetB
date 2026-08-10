@@ -20,15 +20,19 @@ import com.cgb.coffeegourmetb.repository.SaleRepository;
 import com.cgb.coffeegourmetb.repository.UserRepository;
 import com.cgb.coffeegourmetb.service.interfaces.InventoryTransactionService;
 import com.cgb.coffeegourmetb.service.interfaces.SaleService;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import com.cgb.coffeegourmetb.repository.CashRegisterRepository;
+import com.cgb.coffeegourmetb.repository.SaleDetailRepository;
 import com.cgb.coffeegourmetb.enums.CashRegisterStatus;
 import com.cgb.coffeegourmetb.entity.CashRegister;
+import org.springframework.transaction.annotation.Transactional;
+import com.cgb.coffeegourmetb.entity.PriceHistory;
+import com.cgb.coffeegourmetb.repository.PriceHistoryRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -42,6 +46,8 @@ public class SaleServiceImpl implements SaleService {
     private final InventoryTransactionService inventoryTransactionService;
     private final SaleMapper saleMapper;
     private final CashRegisterRepository cashRegisterRepository;
+    private final SaleDetailRepository saleDetailRepository;
+    private final PriceHistoryRepository priceHistoryRepository;
 
     public SaleServiceImpl(
             SaleRepository saleRepository,
@@ -50,7 +56,9 @@ public class SaleServiceImpl implements SaleService {
             PaymentMethodRepository paymentMethodRepository,
             InventoryTransactionService inventoryTransactionService,
             SaleMapper saleMapper,
-            CashRegisterRepository cashRegisterRepository) {
+            CashRegisterRepository cashRegisterRepository,
+            SaleDetailRepository saleDetailRepository,
+            PriceHistoryRepository priceHistoryRepository) {
 
         this.saleRepository = saleRepository;
         this.userRepository = userRepository;
@@ -59,6 +67,8 @@ public class SaleServiceImpl implements SaleService {
         this.inventoryTransactionService = inventoryTransactionService;
         this.saleMapper = saleMapper;
         this.cashRegisterRepository = cashRegisterRepository;
+        this.saleDetailRepository = saleDetailRepository;
+        this.priceHistoryRepository = priceHistoryRepository;
     }
 
     @Override
@@ -127,19 +137,34 @@ public class SaleServiceImpl implements SaleService {
                                     "Producto no encontrado o inactivo con id: "
                                             + detailRequest.getProductoId()));
 
-            BigDecimal subtotal =
-                    detailRequest.getPrecioUnitario()
-                            .multiply(
-                                    BigDecimal.valueOf(
-                                            detailRequest.getCantidad()));
+            PriceHistory precioVigente = priceHistoryRepository
+                    .findByProductoIdAndActivoTrue(producto.getId())
+                    .orElseThrow(() ->
+                            new BusinessException(
+                                    "El producto '" + producto.getNombre()
+                                            + "' no tiene un precio vigente."));
+
+            BigDecimal precioVenta = precioVigente.getPrecioVenta();
+
+            if (precioVenta == null
+                    || precioVenta.compareTo(BigDecimal.ZERO) <= 0) {
+
+                throw new BusinessException(
+                        "El producto '" + producto.getNombre()
+                                + "' no tiene un precio de venta válido.");
+            }
+
+            BigDecimal subtotal = precioVenta
+                    .multiply(
+                            BigDecimal.valueOf(
+                                    detailRequest.getCantidad()));
 
             SaleDetail detalle = new SaleDetail();
 
             detalle.setVenta(sale);
             detalle.setProducto(producto);
             detalle.setCantidad(detailRequest.getCantidad());
-            detalle.setPrecioUnitario(
-                    detailRequest.getPrecioUnitario());
+            detalle.setPrecioUnitario(precioVenta);
             detalle.setSubtotal(subtotal);
 
             sale.getDetalles().add(detalle);
@@ -155,12 +180,21 @@ public class SaleServiceImpl implements SaleService {
          */
         Sale ventaGuardada = saleRepository.save(sale);
 
-        // Registrar ingreso en caja por la venta
-        caja.setEfectivoEsperado(
-                caja.getEfectivoEsperado() == null
-                        ? ventaGuardada.getTotal()
-                        : caja.getEfectivoEsperado()
-                        .add(ventaGuardada.getTotal()));
+        /*
+         * Solo las ventas pagadas en efectivo
+         * incrementan el efectivo esperado de la caja.
+         */
+        if ("EFECTIVO".equalsIgnoreCase(
+                ventaGuardada.getMetodoPago().getNombre())) {
+
+            caja.setEfectivoEsperado(
+                    caja.getEfectivoEsperado() == null
+                            ? ventaGuardada.getTotal()
+                            : caja.getEfectivoEsperado()
+                            .add(ventaGuardada.getTotal()));
+
+            cashRegisterRepository.save(caja);
+        }
 
         cashRegisterRepository.save(caja);
         /*
@@ -303,7 +337,13 @@ public class SaleServiceImpl implements SaleService {
         sale.setUsuarioAnulacion(usuarioAnulacion);
         sale.setMotivoAnulacion(request.getMotivo());
 
-        if (sale.getCaja() != null) {
+        /*
+         * Solo una venta pagada en efectivo afecta
+         * nuevamente el efectivo esperado al ser anulada.
+         */
+        if (sale.getCaja() != null
+                && "EFECTIVO".equalsIgnoreCase(
+                sale.getMetodoPago().getNombre())) {
 
             sale.getCaja().setEfectivoEsperado(
                     sale.getCaja().getEfectivoEsperado()
@@ -312,5 +352,35 @@ public class SaleServiceImpl implements SaleService {
             cashRegisterRepository.save(sale.getCaja());
         }
         saleRepository.save(sale);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Long contarVentasDelDia(LocalDate fecha) {
+
+        LocalDateTime inicio = fecha.atStartOfDay();
+        LocalDateTime fin = fecha.atTime(LocalTime.MAX);
+
+        return saleRepository.countVentasRegistradas(inicio, fin);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public BigDecimal totalVentasDelDia(LocalDate fecha) {
+
+        LocalDateTime inicio = fecha.atStartOfDay();
+        LocalDateTime fin = fecha.atTime(LocalTime.MAX);
+
+        return saleRepository.totalVentasRegistradas(inicio, fin);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Long productosVendidosDelDia(LocalDate fecha) {
+
+        LocalDateTime inicio = fecha.atStartOfDay();
+        LocalDateTime fin = fecha.atTime(LocalTime.MAX);
+
+        return saleDetailRepository.totalProductosVendidos(inicio, fin);
     }
 }

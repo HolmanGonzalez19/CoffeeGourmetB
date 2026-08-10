@@ -12,15 +12,13 @@ import com.cgb.coffeegourmetb.service.interfaces.CredentialService;
 import com.cgb.coffeegourmetb.service.interfaces.PermissionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.cgb.coffeegourmetb.util.constants.PermissionConstants;
 
 import java.util.Set;
 
 @Service
 @Transactional(readOnly = true)
 public class AuthServiceImpl implements AuthService {
-
-    private static final String PERMISSION_OPERAR_CAJA =
-            "OPERAR_CAJA";
 
     private final UserRepository userRepository;
     private final CredentialService credentialService;
@@ -90,7 +88,7 @@ public class AuthServiceImpl implements AuthService {
         boolean puedeOperarCaja =
                 permissionService.userHasPermission(
                         user.getId(),
-                        PERMISSION_OPERAR_CAJA);
+                        PermissionConstants.PERMISSION_OPERAR_CAJA);
 
         if (!puedeOperarCaja) {
 

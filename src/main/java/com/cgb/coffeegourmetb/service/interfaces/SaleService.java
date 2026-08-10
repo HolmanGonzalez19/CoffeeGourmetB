@@ -4,6 +4,8 @@ import com.cgb.coffeegourmetb.dto.request.CancelSaleRequest;
 import com.cgb.coffeegourmetb.dto.request.CreateSaleRequest;
 import com.cgb.coffeegourmetb.dto.response.SaleResponse;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -30,4 +32,10 @@ public interface SaleService {
     void cancel(
             Long id,
             CancelSaleRequest request);
+
+    Long contarVentasDelDia(LocalDate fecha);
+
+    BigDecimal totalVentasDelDia(LocalDate fecha);
+
+    Long productosVendidosDelDia(LocalDate fecha);
 }

@@ -74,6 +74,8 @@ public final class SecurityExpressions {
     public static final String PERMISSION_DEACTIVATE =
             "hasAuthority('" + PermissionConstants.PERMISSION_DEACTIVATE + "')";
 
+    public static final String PERMISSION_OPERAR_CAJA =
+            "hasAuthority('" + PermissionConstants.PERMISSION_OPERAR_CAJA + "')";
 
     // =========================================================
     // PERMISOS DE ROLES

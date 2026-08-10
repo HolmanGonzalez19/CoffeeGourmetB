@@ -3,8 +3,10 @@ package com.cgb.coffeegourmetb.service.interfaces;
 import com.cgb.coffeegourmetb.dto.request.CloseCashRegisterRequest;
 import com.cgb.coffeegourmetb.dto.request.OpenCashRegisterRequest;
 import com.cgb.coffeegourmetb.dto.response.CashRegisterResponse;
+import com.cgb.coffeegourmetb.entity.CashRegister;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Interfaz de servicio para la gestión de cajas.
@@ -47,4 +49,6 @@ public interface CashRegisterService {
     CashRegisterResponse findOpen();
 
     List<CashRegisterResponse> findClosed();
+
+    Optional<CashRegister> obtenerCajaAbierta();
 }

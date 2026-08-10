@@ -122,7 +122,11 @@ public class PriceHistoryServiceImpl implements PriceHistoryService {
                     }
                 });
 
-        history.setActivo(true);
+        try {
+            history.setActivo(true);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         history.setFechaFin(null);
 

@@ -17,6 +17,14 @@ public interface CashRegisterRepository
             CashRegisterStatus estado
     );
 
+    Optional<CashRegister> findFirstByEstado(
+            CashRegisterStatus estado
+    );
+
+    default Optional<CashRegister> findOpenCashRegister() {
+        return findFirstByEstado(CashRegisterStatus.ABIERTA);
+    }
+
     List<CashRegister> findAllByEstado(
             CashRegisterStatus estado
     );
@@ -30,5 +38,4 @@ public interface CashRegisterRepository
     List<CashRegister> findByEstadoOrderByFechaAperturaDesc(
             CashRegisterStatus estado
     );
-
 }
