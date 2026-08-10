@@ -24,7 +24,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     boolean existsByNombreAndIdNot(String nombre, Long id);
 
-    List<Product> findByActivoTrue();
+    List<Product> findByActivoTrueOrderByNombreAsc();
 
     List<Product> findByActivoFalse();
 

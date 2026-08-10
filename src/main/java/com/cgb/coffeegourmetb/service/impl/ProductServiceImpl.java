@@ -45,7 +45,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductResponse> findAll() {
 
-        return productRepository.findByActivoTrue()
+        return productRepository.findByActivoTrueOrderByNombreAsc()
                 .stream()
                 .map(productMapper::toResponse)
                 .toList();
