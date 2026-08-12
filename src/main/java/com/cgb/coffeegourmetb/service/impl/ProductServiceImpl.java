@@ -2,6 +2,7 @@ package com.cgb.coffeegourmetb.service.impl;
 
 import com.cgb.coffeegourmetb.dto.request.CreateProductRequest;
 import com.cgb.coffeegourmetb.dto.request.UpdateProductRequest;
+import com.cgb.coffeegourmetb.dto.response.ProductPosResponse;
 import com.cgb.coffeegourmetb.dto.response.ProductResponse;
 import com.cgb.coffeegourmetb.entity.Category;
 import com.cgb.coffeegourmetb.entity.Inventory;
@@ -13,10 +14,10 @@ import com.cgb.coffeegourmetb.repository.CategoryRepository;
 import com.cgb.coffeegourmetb.repository.InventoryRepository;
 import com.cgb.coffeegourmetb.repository.ProductRepository;
 import com.cgb.coffeegourmetb.service.interfaces.ProductService;
-import com.cgb.coffeegourmetb.dto.response.ProductPosResponse;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -27,7 +28,6 @@ public class ProductServiceImpl implements ProductService {
     private final CategoryRepository categoryRepository;
     private final InventoryRepository inventoryRepository;
     private final ProductMapper productMapper;
-
 
     public ProductServiceImpl(
             ProductRepository productRepository,
@@ -41,16 +41,25 @@ public class ProductServiceImpl implements ProductService {
         this.productMapper = productMapper;
     }
 
-
     @Override
     public List<ProductResponse> findAll() {
 
-        return productRepository.findByActivoTrueOrderByNombreAsc()
+        return productRepository
+                .findAllActiveWithCurrentPriceData()
                 .stream()
-                .map(productMapper::toResponse)
+                .map(row -> {
+
+                    Product product = (Product) row[0];
+
+                    BigDecimal precioVenta =
+                            (BigDecimal) row[1];
+
+                    return productMapper.toResponse(
+                            product,
+                            precioVenta);
+                })
                 .toList();
     }
-
 
     @Override
     public List<ProductResponse> findAllInactive() {
@@ -61,61 +70,58 @@ public class ProductServiceImpl implements ProductService {
                 .toList();
     }
 
-
     @Override
     public ProductResponse findById(Long id) {
 
-        Product product = productRepository.findByIdAndActivoTrue(id)
+        Product product = productRepository
+                .findByIdAndActivoTrue(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
-                                "No existe un producto activo con id: " + id));
+                                "No existe un producto activo con id: "
+                                        + id));
 
         return productMapper.toResponse(product);
     }
 
-
     @Override
-    public ProductResponse create(CreateProductRequest request) {
+    public ProductResponse create(
+            CreateProductRequest request) {
 
         validateCode(request.getCodigo());
         validateBarcode(request.getCodigoBarras());
         validateName(request.getNombre());
 
-
-        Category category = findCategory(request.getCategoriaId());
-
+        Category category =
+                findCategory(request.getCategoriaId());
 
         Product product =
-                productMapper.toEntity(request, category);
-
+                productMapper.toEntity(
+                        request,
+                        category);
 
         Product saved =
                 productRepository.save(product);
 
-
-        // Crear inventario inicial del producto
         Inventory inventory = new Inventory();
 
         inventory.setProducto(saved);
-
         inventory.setCantidadActual(0);
 
         inventoryRepository.save(inventory);
 
-
         return productMapper.toResponse(saved);
     }
 
-
     @Override
-    public ProductResponse update(Long id,
-                                  UpdateProductRequest request) {
-
+    public ProductResponse update(
+            Long id,
+            UpdateProductRequest request) {
 
         Product product = findProduct(id);
 
-
-        validateCodeForUpdate(request.getCodigo(), id);
+        validateCodeForUpdate(
+                request.getCodigo(),
+                id);
 
         validateBarcodeForUpdate(
                 request.getCodigoBarras(),
@@ -125,24 +131,20 @@ public class ProductServiceImpl implements ProductService {
                 request.getNombre(),
                 id);
 
-
         Category category =
-                findCategory(request.getCategoriaId());
-
+                findCategory(
+                        request.getCategoriaId());
 
         productMapper.updateEntity(
                 request,
                 product,
                 category);
 
-
         Product updated =
                 productRepository.save(product);
 
-
         return productMapper.toResponse(updated);
     }
-
 
     @Override
     public void activate(Long id) {
@@ -153,7 +155,6 @@ public class ProductServiceImpl implements ProductService {
 
         productRepository.save(product);
     }
-
 
     @Override
     public void deactivate(Long id) {
@@ -171,58 +172,59 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findAllForPos();
     }
 
-
     // ==========================
     // Métodos privados
     // ==========================
-
 
     private Product findProduct(Long id) {
 
         return productRepository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
-                                "No existe un producto con id: " + id));
+                                "No existe un producto con id: "
+                                        + id));
     }
-
 
     private Category findCategory(Long id) {
 
-        return categoryRepository.findByIdAndActivoTrue(id)
+        return categoryRepository
+                .findByIdAndActivoTrue(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
-                                "No existe una categoría activa con id: " + id));
+                                "No existe una categoría activa con id: "
+                                        + id));
     }
-
 
     private void validateCode(String codigo) {
 
         if (productRepository.existsByCodigo(codigo)) {
 
             throw new BusinessException(
-                    "Ya existe un producto con el código: " + codigo);
+                    "Ya existe un producto con el código: "
+                            + codigo);
         }
     }
-
 
     private void validateCodeForUpdate(
             String codigo,
             Long id) {
 
-        if (productRepository.existsByCodigoAndIdNot(codigo, id)) {
+        if (productRepository
+                .existsByCodigoAndIdNot(codigo, id)) {
 
             throw new BusinessException(
-                    "Ya existe otro producto con el código: " + codigo);
+                    "Ya existe otro producto con el código: "
+                            + codigo);
         }
     }
 
-
-    private void validateBarcode(String codigoBarras) {
+    private void validateBarcode(
+            String codigoBarras) {
 
         if (codigoBarras != null
                 && !codigoBarras.isBlank()
-                && productRepository.existsByCodigoBarras(codigoBarras)) {
-
+                && productRepository
+                .existsByCodigoBarras(codigoBarras)) {
 
             throw new BusinessException(
                     "Ya existe un producto con el código de barras: "
@@ -230,18 +232,16 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
-
     private void validateBarcodeForUpdate(
             String codigoBarras,
             Long id) {
 
-
         if (codigoBarras != null
                 && !codigoBarras.isBlank()
-                && productRepository.existsByCodigoBarrasAndIdNot(
-                codigoBarras,
-                id)) {
-
+                && productRepository
+                .existsByCodigoBarrasAndIdNot(
+                        codigoBarras,
+                        id)) {
 
             throw new BusinessException(
                     "Ya existe otro producto con el código de barras: "
@@ -249,31 +249,28 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
-
     private void validateName(String nombre) {
 
         if (productRepository.existsByNombre(nombre)) {
 
             throw new BusinessException(
-                    "Ya existe un producto con el nombre: " + nombre);
+                    "Ya existe un producto con el nombre: "
+                            + nombre);
         }
     }
-
 
     private void validateNameForUpdate(
             String nombre,
             Long id) {
 
-
-        if (productRepository.existsByNombreAndIdNot(
-                nombre,
-                id)) {
-
+        if (productRepository
+                .existsByNombreAndIdNot(
+                        nombre,
+                        id)) {
 
             throw new BusinessException(
                     "Ya existe otro producto con el nombre: "
                             + nombre);
         }
     }
-
 }

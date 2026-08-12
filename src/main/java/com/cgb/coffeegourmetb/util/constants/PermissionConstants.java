@@ -155,19 +155,19 @@ public final class PermissionConstants {
     // =========================================================
 
     public static final String PAYMENT_METHOD_READ =
-            "PAYMENT_METHOD_READ";
+            "PAYMENT_METHODS_READ";
 
     public static final String PAYMENT_METHOD_CREATE =
-            "PAYMENT_METHOD_CREATE";
+            "PAYMENT_METHODS_CREATE";
 
     public static final String PAYMENT_METHOD_UPDATE =
-            "PAYMENT_METHOD_UPDATE";
+            "PAYMENT_METHODS_UPDATE";
 
     public static final String PAYMENT_METHOD_ACTIVATE =
-            "PAYMENT_METHOD_ACTIVATE";
+            "PAYMENT_METHODS_ACTIVATE";
 
     public static final String PAYMENT_METHOD_DEACTIVATE =
-            "PAYMENT_METHOD_DEACTIVATE";
+            "PAYMENT_METHODS_DEACTIVATE";
 
 
     // =========================================================
@@ -219,13 +219,13 @@ public final class PermissionConstants {
     // =========================================================
 
     public static final String SALE_READ =
-            "SALE_READ";
+            "SALES_READ";
 
     public static final String SALE_CREATE =
-            "SALE_CREATE";
+            "SALES_CREATE";
 
     public static final String SALE_CANCEL =
-            "SALE_CANCEL";
+            "SALES_CANCEL";
 
 
     // =========================================================

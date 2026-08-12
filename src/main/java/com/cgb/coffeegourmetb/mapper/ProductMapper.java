@@ -7,13 +7,17 @@ import com.cgb.coffeegourmetb.entity.Category;
 import com.cgb.coffeegourmetb.entity.Product;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+
 @Component
 public class ProductMapper {
 
     /**
      * Convierte un CreateProductRequest en Product.
      */
-    public Product toEntity(CreateProductRequest request, Category category) {
+    public Product toEntity(
+            CreateProductRequest request,
+            Category category) {
 
         Product product = new Product();
 
@@ -31,29 +35,53 @@ public class ProductMapper {
 
     /**
      * Convierte Product en ProductResponse.
+     *
+     * El precioVenta no se establece aquí porque pertenece
+     * a PriceHistory y no a Product.
      */
     public ProductResponse toResponse(Product product) {
+
+        return toResponse(product, null);
+    }
+
+    /**
+     * Convierte Product en ProductResponse incluyendo
+     * el precio de venta vigente obtenido desde PriceHistory.
+     */
+    public ProductResponse toResponse(
+            Product product,
+            BigDecimal precioVenta) {
 
         ProductResponse response = new ProductResponse();
 
         response.setId(product.getId());
 
-        response.setCategoriaId(product.getCategoria().getId());
-        response.setCategoriaNombre(product.getCategoria().getNombre());
+        response.setCategoriaId(
+                product.getCategoria().getId());
+
+        response.setCategoriaNombre(
+                product.getCategoria().getNombre());
 
         response.setCodigo(product.getCodigo());
         response.setCodigoBarras(product.getCodigoBarras());
         response.setNombre(product.getNombre());
         response.setDescripcion(product.getDescripcion());
 
-        response.setTipoProducto(product.getTipoProducto());
+        response.setTipoProducto(
+                product.getTipoProducto());
 
-        response.setStockMinimo(product.getStockMinimo());
+        response.setStockMinimo(
+                product.getStockMinimo());
+
+        response.setPrecioVenta(precioVenta);
 
         response.setActivo(product.getActivo());
 
-        response.setFechaCreacion(product.getFechaCreacion());
-        response.setFechaActualizacion(product.getFechaActualizacion());
+        response.setFechaCreacion(
+                product.getFechaCreacion());
+
+        response.setFechaActualizacion(
+                product.getFechaActualizacion());
 
         return response;
     }
@@ -61,9 +89,10 @@ public class ProductMapper {
     /**
      * Actualiza una entidad existente.
      */
-    public void updateEntity(UpdateProductRequest request,
-                             Product product,
-                             Category category) {
+    public void updateEntity(
+            UpdateProductRequest request,
+            Product product,
+            Category category) {
 
         product.setCodigo(request.getCodigo());
         product.setCodigoBarras(request.getCodigoBarras());
@@ -74,5 +103,4 @@ public class ProductMapper {
         product.setStockMinimo(request.getStockMinimo());
         product.setActivo(request.getActivo());
     }
-
 }

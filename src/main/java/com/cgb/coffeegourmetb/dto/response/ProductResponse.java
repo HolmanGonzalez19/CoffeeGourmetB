@@ -2,6 +2,7 @@ package com.cgb.coffeegourmetb.dto.response;
 
 import com.cgb.coffeegourmetb.enums.ProductType;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class ProductResponse {
@@ -20,6 +21,8 @@ public class ProductResponse {
     private Integer stockMinimo;
 
     private String descripcion;
+
+    private BigDecimal precioVenta;
 
     private Boolean activo;
 
@@ -100,6 +103,14 @@ public class ProductResponse {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
+    }
+
+    public BigDecimal getPrecioVenta() {
+        return precioVenta;
+    }
+
+    public void setPrecioVenta(BigDecimal precioVenta) {
+        this.precioVenta = precioVenta;
     }
 
     public Boolean getActivo() {

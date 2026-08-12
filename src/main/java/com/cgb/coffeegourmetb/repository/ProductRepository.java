@@ -1,9 +1,9 @@
 package com.cgb.coffeegourmetb.repository;
 
+import com.cgb.coffeegourmetb.dto.response.ProductPosResponse;
 import com.cgb.coffeegourmetb.entity.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import com.cgb.coffeegourmetb.dto.response.ProductPosResponse;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,20 +30,22 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     boolean existsByCodigoBarras(String codigoBarras);
 
-    boolean existsByCodigoBarrasAndIdNot(String codigoBarras, Long id);
+    boolean existsByCodigoBarrasAndIdNot(
+            String codigoBarras,
+            Long id);
 
     @Query("""
-    SELECT p
-    FROM Product p
-    WHERE p.activo = true
-    AND p.id NOT IN (
-        SELECT DISTINCT d.producto.id
-        FROM SaleDetail d
-        WHERE d.venta.estado =
-            com.cgb.coffeegourmetb.enums.SaleStatus.REGISTRADA
-    )
-    ORDER BY p.nombre
-    """)
+        SELECT p
+        FROM Product p
+        WHERE p.activo = true
+        AND p.id NOT IN (
+            SELECT DISTINCT d.producto.id
+            FROM SaleDetail d
+            WHERE d.venta.estado =
+                com.cgb.coffeegourmetb.enums.SaleStatus.REGISTRADA
+        )
+        ORDER BY p.nombre
+        """)
     List<Product> productosSinVentas();
 
     @Query("""
@@ -54,8 +56,19 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             AND ph.activo = true
         WHERE p.activo = true
         ORDER BY p.nombre
-    """)
+        """)
     List<Product> findAllActiveWithCurrentPrice();
+
+    @Query("""
+        SELECT p, ph.precioVenta
+        FROM Product p
+        LEFT JOIN PriceHistory ph
+            ON ph.producto = p
+            AND ph.activo = true
+        WHERE p.activo = true
+        ORDER BY p.nombre ASC
+        """)
+    List<Object[]> findAllActiveWithCurrentPriceData();
 
     @Query("""
         SELECT new com.cgb.coffeegourmetb.dto.response.ProductPosResponse(
@@ -76,7 +89,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                 AND ph.precioVenta > 0
             WHERE p.activo = true
             ORDER BY p.nombre
-    """)
+        """)
     List<ProductPosResponse> findAllForPos();
-
 }
