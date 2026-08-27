@@ -10,18 +10,36 @@ public class CashMovementMapper {
     public CashMovementResponse toResponse(
             CashMovement entity) {
 
-        CashMovementResponse dto =
+        if (entity == null) {
+            return null;
+        }
+
+        CashMovementResponse response =
                 new CashMovementResponse();
 
-        dto.setId(entity.getId());
-        dto.setCajaId(entity.getCaja().getId());
-        dto.setUsuarioId(entity.getUsuario().getId());
-        dto.setTipoMovimiento(entity.getTipoMovimiento().name());
-        dto.setMonto(entity.getMonto());
-        dto.setDescripcion(entity.getDescripcion());
-        dto.setFechaMovimiento(entity.getFechaMovimiento());
+        response.setId(entity.getId());
 
-        return dto;
+        response.setCajaId(
+                entity.getCaja().getId());
+
+        response.setUsuarioId(
+                entity.getUsuario().getId());
+
+        response.setUsuarioNombre(
+                entity.getUsuario().getNombre());
+
+        response.setTipoMovimiento(
+                entity.getTipoMovimiento());
+
+        response.setMonto(
+                entity.getMonto());
+
+        response.setDescripcion(
+                entity.getDescripcion());
+
+        response.setFechaMovimiento(
+                entity.getFechaMovimiento());
+
+        return response;
     }
-
 }

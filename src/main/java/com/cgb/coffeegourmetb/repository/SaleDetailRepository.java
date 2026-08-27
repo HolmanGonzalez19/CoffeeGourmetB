@@ -57,4 +57,15 @@ public interface SaleDetailRepository
             @Param("fin") LocalDateTime fin
     );
 
+    @Query("""
+    SELECT COALESCE(SUM(sd.cantidad), 0)
+    FROM SaleDetail sd
+    WHERE sd.venta.id = :ventaId
+    AND sd.venta.estado =
+        com.cgb.coffeegourmetb.enums.SaleStatus.REGISTRADA
+""")
+    Long cantidadProductosPorVenta(
+            @Param("ventaId") Long ventaId
+    );
+
 }

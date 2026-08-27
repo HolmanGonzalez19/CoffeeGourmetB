@@ -2,6 +2,7 @@ package com.cgb.coffeegourmetb.service.impl;
 
 import com.cgb.coffeegourmetb.dto.request.CreateUserRequest;
 import com.cgb.coffeegourmetb.dto.request.UpdateUserRequest;
+import com.cgb.coffeegourmetb.dto.response.OperatorResponse;
 import com.cgb.coffeegourmetb.dto.response.UserResponse;
 import com.cgb.coffeegourmetb.entity.Role;
 import com.cgb.coffeegourmetb.entity.User;
@@ -24,9 +25,10 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
     private final UserMapper userMapper;
 
-    public UserServiceImpl(UserRepository userRepository,
-                           RoleRepository roleRepository,
-                           UserMapper userMapper) {
+    public UserServiceImpl(
+            UserRepository userRepository,
+            RoleRepository roleRepository,
+            UserMapper userMapper) {
 
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
@@ -63,6 +65,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<OperatorResponse> findOperators() {
+
+        return userRepository.findActiveOperators("OPERADOR");
+    }
+
+    @Override
     public UserResponse create(CreateUserRequest request) {
 
         validateUsername(request.getUsuario());
@@ -74,30 +82,38 @@ public class UserServiceImpl implements UserService {
         user.setRole(role);
         user.setPasswordHash(request.getPassword());
 
-        return userMapper.toResponse(userRepository.save(user));
+        return userMapper.toResponse(
+                userRepository.save(user));
     }
 
     @Override
-    public UserResponse update(Long id,
-                               UpdateUserRequest request) {
+    public UserResponse update(
+            Long id,
+            UpdateUserRequest request) {
 
         User user = findUser(id);
 
-        validateUsernameForUpdate(request.getUsuario(), id);
+        validateUsernameForUpdate(
+                request.getUsuario(),
+                id);
 
         Role role = findRole(request.getRolId());
 
-        userMapper.updateEntity(request, user);
+        userMapper.updateEntity(
+                request,
+                user);
 
         user.setRole(role);
 
         if (request.getPassword() != null &&
                 !request.getPassword().isBlank()) {
 
-            user.setPasswordHash(request.getPassword());
+            user.setPasswordHash(
+                    request.getPassword());
         }
 
-        return userMapper.toResponse(userRepository.save(user));
+        return userMapper.toResponse(
+                userRepository.save(user));
     }
 
     @Override
@@ -145,10 +161,13 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private void validateUsernameForUpdate(String usuario,
-                                           Long id) {
+    private void validateUsernameForUpdate(
+            String usuario,
+            Long id) {
 
-        if (userRepository.existsByUsuarioAndIdNot(usuario, id)) {
+        if (userRepository.existsByUsuarioAndIdNot(
+                usuario,
+                id)) {
 
             throw new BusinessException(
                     "Ya existe otro usuario con ese nombre.");

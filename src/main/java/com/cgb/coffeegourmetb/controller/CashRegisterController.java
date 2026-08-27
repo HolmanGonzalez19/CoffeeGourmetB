@@ -3,6 +3,7 @@ package com.cgb.coffeegourmetb.controller;
 import com.cgb.coffeegourmetb.dto.request.CloseCashRegisterRequest;
 import com.cgb.coffeegourmetb.dto.request.OpenCashRegisterRequest;
 import com.cgb.coffeegourmetb.dto.response.CashRegisterResponse;
+import com.cgb.coffeegourmetb.dto.response.CashRegisterStatusResponse;
 import com.cgb.coffeegourmetb.service.interfaces.CashRegisterService;
 import com.cgb.coffeegourmetb.util.constants.ApiPaths;
 import com.cgb.coffeegourmetb.security.SecurityExpressions;
@@ -67,12 +68,26 @@ public class CashRegisterController {
                 request);
     }
 
-    @Operation(summary = "Consultar caja abierta")
+
+    @Operation(
+            summary = "Consultar estado de la caja actual",
+            description = "Consulta pública que devuelve únicamente si existe una caja abierta."
+    )
     @GetMapping(ApiPaths.CASH_REGISTER_CURRENT)
-    @PreAuthorize(SecurityExpressions.CASH_REGISTER_READ)
-    public CashRegisterResponse findOpen() {
+    public CashRegisterStatusResponse findOpen() {
 
         return service.findOpen();
+    }
+
+    @Operation(
+            summary = "Consultar caja abierta",
+            description = "Consulta administrativa de la caja abierta con información completa."
+    )
+    @GetMapping("/open")
+    @PreAuthorize(SecurityExpressions.CASH_REGISTER_READ)
+    public CashRegisterResponse findOpenAdministrative() {
+
+        return service.findOpenAdministrative();
     }
 
     @Operation(summary = "Consultar caja por id")
@@ -99,5 +114,7 @@ public class CashRegisterController {
 
         return service.findClosed();
     }
+
+
 
 }

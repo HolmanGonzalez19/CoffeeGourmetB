@@ -50,13 +50,22 @@ public class SecurityConfig {
 
                         .requestMatchers(
                                 org.springframework.http.HttpMethod.GET,
-                                "/api/products",
-                                "/api/users"
+                                "/api/products"
                         ).permitAll()
 
                         .requestMatchers(
                                 org.springframework.http.HttpMethod.GET,
                                 "/api/products/*"
+                        ).permitAll()
+
+                        .requestMatchers(
+                                org.springframework.http.HttpMethod.GET,
+                                "/api/users/operators"
+                        ).permitAll()
+
+                        .requestMatchers(
+                                org.springframework.http.HttpMethod.GET,
+                                "/api/cash-register/current"
                         ).permitAll()
 
                         .anyRequest().authenticated()

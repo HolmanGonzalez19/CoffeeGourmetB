@@ -1,28 +1,17 @@
 package com.cgb.coffeegourmetb.dto.request;
 
-import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 
 import java.math.BigDecimal;
 
 public class CloseCashRegisterRequest {
 
-    @NotNull
-    private Long usuarioCierreId;
-
-    @NotNull
-    @DecimalMin("0.00")
+    @NotNull(message = "El efectivo contado es obligatorio.")
+    @PositiveOrZero(message = "El efectivo contado no puede ser negativo.")
     private BigDecimal efectivoContado;
 
     public CloseCashRegisterRequest() {
-    }
-
-    public Long getUsuarioCierreId() {
-        return usuarioCierreId;
-    }
-
-    public void setUsuarioCierreId(Long usuarioCierreId) {
-        this.usuarioCierreId = usuarioCierreId;
     }
 
     public BigDecimal getEfectivoContado() {

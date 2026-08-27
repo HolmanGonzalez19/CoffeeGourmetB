@@ -13,10 +13,10 @@ import com.cgb.coffeegourmetb.repository.CashMovementRepository;
 import com.cgb.coffeegourmetb.repository.CashRegisterRepository;
 import com.cgb.coffeegourmetb.repository.UserRepository;
 import com.cgb.coffeegourmetb.service.interfaces.CashMovementService;
-import com.cgb.coffeegourmetb.util.constants.ApiMessages;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.cgb.coffeegourmetb.enums.CashMovementType;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,18 +26,18 @@ import java.util.List;
 public class CashMovementServiceImpl
         implements CashMovementService {
 
-    private final CashMovementRepository repository;
+    private final CashMovementRepository cashMovementRepository;
     private final CashRegisterRepository cashRegisterRepository;
     private final UserRepository userRepository;
     private final CashMovementMapper mapper;
 
     public CashMovementServiceImpl(
-            CashMovementRepository repository,
+            CashMovementRepository cashMovementRepository,
             CashRegisterRepository cashRegisterRepository,
             UserRepository userRepository,
             CashMovementMapper mapper) {
 
-        this.repository = repository;
+        this.cashMovementRepository = cashMovementRepository;
         this.cashRegisterRepository = cashRegisterRepository;
         this.userRepository = userRepository;
         this.mapper = mapper;
@@ -48,25 +48,16 @@ public class CashMovementServiceImpl
             CreateCashMovementRequest request) {
 
         CashRegister caja =
-                cashRegisterRepository.findById(
-                                request.getCajaId())
+                cashRegisterRepository
+                        .findByEstado(
+                                CashRegisterStatus.ABIERTA)
                         .orElseThrow(() ->
-                                new ResourceNotFoundException(
-                                        ApiMessages.CASH_REGISTER_NOT_FOUND));
-
-        if (caja.getEstado() !=
-                CashRegisterStatus.ABIERTA) {
-
-            throw new BusinessException(
-                    "La caja se encuentra cerrada.");
-        }
+                                new BusinessException(
+                                        "No existe una caja abierta."
+                                ));
 
         User usuario =
-                userRepository.findById(
-                                request.getUsuarioId())
-                        .orElseThrow(() ->
-                                new ResourceNotFoundException(
-                                        "Usuario no encontrado."));
+                obtenerUsuarioAutenticado();
 
         CashMovement movimiento =
                 new CashMovement();
@@ -74,10 +65,7 @@ public class CashMovementServiceImpl
         movimiento.setCaja(caja);
         movimiento.setUsuario(usuario);
         movimiento.setTipoMovimiento(
-                CashMovementType.valueOf(
-                        request.getTipoMovimiento().toUpperCase()
-                )
-        );
+                request.getTipoMovimiento());
         movimiento.setMonto(
                 request.getMonto());
         movimiento.setDescripcion(
@@ -85,23 +73,55 @@ public class CashMovementServiceImpl
         movimiento.setFechaMovimiento(
                 LocalDateTime.now());
 
-        repository.save(movimiento);
+        CashMovement guardado =
+                cashMovementRepository.save(movimiento);
 
-        return mapper.toResponse(
-                movimiento);
+        return mapper.toResponse(guardado);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<CashMovementResponse> findByCashRegister(
-            Long cashRegisterId) {
+    public List<CashMovementResponse> findByCaja(
+            Long cajaId) {
 
-        return repository
-                .findByCajaIdOrderByFechaMovimientoDesc(
-                        cashRegisterId)
+        CashRegister caja =
+                cashRegisterRepository
+                        .findById(cajaId)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "No existe la caja con id: "
+                                                + cajaId
+                                ));
+
+        return cashMovementRepository
+                .findByCajaOrderByFechaMovimientoDesc(caja)
                 .stream()
                 .map(mapper::toResponse)
                 .toList();
     }
 
+    private User obtenerUsuarioAutenticado() {
+
+        Authentication authentication =
+                SecurityContextHolder
+                        .getContext()
+                        .getAuthentication();
+
+        if (authentication == null ||
+                !authentication.isAuthenticated()) {
+
+            throw new BusinessException(
+                    "Usuario no autenticado.");
+        }
+
+        String username =
+                authentication.getName();
+
+        return userRepository
+                .findByUsuarioAndActivoTrue(username)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Usuario autenticado no encontrado."
+                        ));
+    }
 }

@@ -1,16 +1,26 @@
 package com.cgb.coffeegourmetb.dto.response;
 
+import com.cgb.coffeegourmetb.enums.CashMovementType;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class CashMovementResponse {
 
     private Long id;
+
     private Long cajaId;
+
     private Long usuarioId;
-    private String tipoMovimiento;
+
+    private String usuarioNombre;
+
+    private CashMovementType tipoMovimiento;
+
     private BigDecimal monto;
+
     private String descripcion;
+
     private LocalDateTime fechaMovimiento;
 
     public CashMovementResponse() {
@@ -40,11 +50,21 @@ public class CashMovementResponse {
         this.usuarioId = usuarioId;
     }
 
-    public String getTipoMovimiento() {
+    public String getUsuarioNombre() {
+        return usuarioNombre;
+    }
+
+    public void setUsuarioNombre(String usuarioNombre) {
+        this.usuarioNombre = usuarioNombre;
+    }
+
+    public CashMovementType getTipoMovimiento() {
         return tipoMovimiento;
     }
 
-    public void setTipoMovimiento(String tipoMovimiento) {
+    public void setTipoMovimiento(
+            CashMovementType tipoMovimiento) {
+
         this.tipoMovimiento = tipoMovimiento;
     }
 
@@ -68,7 +88,9 @@ public class CashMovementResponse {
         return fechaMovimiento;
     }
 
-    public void setFechaMovimiento(LocalDateTime fechaMovimiento) {
+    public void setFechaMovimiento(
+            LocalDateTime fechaMovimiento) {
+
         this.fechaMovimiento = fechaMovimiento;
     }
 }
