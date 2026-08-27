@@ -2,6 +2,7 @@ package com.cgb.coffeegourmetb.controller;
 
 import com.cgb.coffeegourmetb.dto.request.CreateUserRequest;
 import com.cgb.coffeegourmetb.dto.request.UpdateUserRequest;
+import com.cgb.coffeegourmetb.dto.response.OperatorResponse;
 import com.cgb.coffeegourmetb.dto.response.UserResponse;
 import com.cgb.coffeegourmetb.service.interfaces.UserService;
 import com.cgb.coffeegourmetb.util.constants.ApiPaths;
@@ -36,9 +37,16 @@ public class UserController {
     }
 
     @Operation(summary = "Listar usuarios activos")
+    @PreAuthorize(USER_READ)
     @GetMapping
     public List<UserResponse> findAll() {
         return service.findAll();
+    }
+
+    @Operation(summary = "Listar operadores activos")
+    @GetMapping("/operators")
+    public List<OperatorResponse> findOperators() {
+        return service.findOperators();
     }
 
     @Operation(summary = "Listar usuarios inactivos")
@@ -58,44 +66,61 @@ public class UserController {
     @Operation(summary = "Crear usuario")
     @PreAuthorize(USER_CREATE)
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Usuario creado correctamente")
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Usuario creado correctamente")
     })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserResponse create(@Valid @RequestBody CreateUserRequest request) {
+    public UserResponse create(
+            @Valid @RequestBody CreateUserRequest request) {
+
         return service.create(request);
     }
 
     @Operation(summary = "Actualizar usuario")
     @PreAuthorize(USER_UPDATE)
     @PutMapping(ApiPaths.USERS_BY_ID)
-    public UserResponse update(@PathVariable Long id,
-                               @Valid @RequestBody UpdateUserRequest request) {
+    public UserResponse update(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateUserRequest request) {
+
         return service.update(id, request);
     }
 
     @Operation(summary = "Activar usuario")
     @PreAuthorize(USER_ACTIVATE)
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Usuario activado correctamente"),
-            @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "Usuario activado correctamente"),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Usuario no encontrado")
     })
     @PutMapping(ApiPaths.USERS_ACTIVATE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void activate(@PathVariable Long id) {
+    public void activate(
+            @PathVariable Long id) {
+
         service.activate(id);
     }
 
     @Operation(summary = "Desactivar usuario")
     @PreAuthorize(USER_DEACTIVATE)
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Usuario desactivado correctamente"),
-            @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "Usuario desactivado correctamente"),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Usuario no encontrado")
     })
     @PutMapping(ApiPaths.USERS_DEACTIVATE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deactivate(@PathVariable Long id) {
+    public void deactivate(
+            @PathVariable Long id) {
+
         service.deactivate(id);
     }
-
 }

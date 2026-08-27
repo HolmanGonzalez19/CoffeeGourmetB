@@ -8,9 +8,10 @@ import java.util.List;
 public interface CashMovementService {
 
     CashMovementResponse create(
-            CreateCashMovementRequest request);
+            CreateCashMovementRequest request
+    );
 
-    List<CashMovementResponse> findByCashRegister(
-            Long cashRegisterId);
-
+    List<CashMovementResponse> findByCaja(
+            Long cajaId
+    );
 }

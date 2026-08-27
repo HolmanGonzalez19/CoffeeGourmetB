@@ -47,6 +47,10 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
             Long id,
             SaleStatus estado);
 
+    List<Sale> findTop5ByEstadoOrderByFechaHoraDesc(
+            SaleStatus estado
+    );
+
     @Query("""
         SELECT COALESCE(SUM(s.total),0)
         FROM Sale s

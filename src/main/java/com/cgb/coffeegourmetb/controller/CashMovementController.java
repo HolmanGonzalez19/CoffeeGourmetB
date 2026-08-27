@@ -3,9 +3,9 @@ package com.cgb.coffeegourmetb.controller;
 import com.cgb.coffeegourmetb.dto.request.CreateCashMovementRequest;
 import com.cgb.coffeegourmetb.dto.response.CashMovementResponse;
 import com.cgb.coffeegourmetb.service.interfaces.CashMovementService;
-import com.cgb.coffeegourmetb.util.constants.ApiPaths;
-import com.cgb.coffeegourmetb.security.SecurityExpressions;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -15,11 +15,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.cgb.coffeegourmetb.security.SecurityExpressions.PERMISSION_OPERAR_CAJA;
+import static com.cgb.coffeegourmetb.security.SecurityExpressions.CASH_REGISTER_READ;
+
 @RestController
-@RequestMapping(ApiPaths.CASH_MOVEMENTS)
+@RequestMapping("/api/cash-movements")
 @Tag(
-        name = "Movimientos de Caja",
-        description = "API para la gestión de movimientos de efectivo."
+        name = "Movimientos de caja",
+        description = "API para gestionar ingresos y retiros de efectivo."
 )
 @SecurityRequirement(name = "bearerAuth")
 public class CashMovementController {
@@ -33,9 +36,19 @@ public class CashMovementController {
     }
 
     @Operation(summary = "Registrar movimiento de caja")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Movimiento registrado correctamente"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Datos inválidos o caja cerrada"
+            )
+    })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize(SecurityExpressions.CASH_REGISTER_OPERATION)
+    @PreAuthorize(PERMISSION_OPERAR_CAJA)
     public CashMovementResponse create(
             @Valid
             @RequestBody
@@ -45,13 +58,11 @@ public class CashMovementController {
     }
 
     @Operation(summary = "Consultar movimientos de una caja")
-    @GetMapping(ApiPaths.CASH_MOVEMENTS_BY_CASH_REGISTER)
-    @PreAuthorize(SecurityExpressions.CASH_REGISTER_READ)
-    public List<CashMovementResponse> findByCashRegister(
-            @PathVariable Long cashRegisterId) {
+    @GetMapping("/cash-register/{cajaId}")
+    @PreAuthorize(CASH_REGISTER_READ)
+    public List<CashMovementResponse> findByCaja(
+            @PathVariable Long cajaId) {
 
-        return service.findByCashRegister(
-                cashRegisterId);
+        return service.findByCaja(cajaId);
     }
-
 }

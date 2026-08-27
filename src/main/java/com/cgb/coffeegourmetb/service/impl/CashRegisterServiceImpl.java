@@ -3,6 +3,7 @@ package com.cgb.coffeegourmetb.service.impl;
 import com.cgb.coffeegourmetb.dto.request.CloseCashRegisterRequest;
 import com.cgb.coffeegourmetb.dto.request.OpenCashRegisterRequest;
 import com.cgb.coffeegourmetb.dto.response.CashRegisterResponse;
+import com.cgb.coffeegourmetb.dto.response.CashRegisterStatusResponse;
 import com.cgb.coffeegourmetb.entity.CashRegister;
 import com.cgb.coffeegourmetb.entity.User;
 import com.cgb.coffeegourmetb.enums.CashMovementType;
@@ -96,15 +97,12 @@ public class CashRegisterServiceImpl
                     ApiMessages.CASH_REGISTER_ALREADY_CLOSED);
         }
 
-        User usuario =
-                userRepository.findById(
-                                request.getUsuarioCierreId())
-                        .orElseThrow(() ->
-                                new ResourceNotFoundException(
-                                        "Usuario no encontrado."));
+        User usuario = obtenerUsuarioAutenticado();
 
-        BigDecimal ventas =
-                saleRepository.sumTotalByCaja(caja);
+        BigDecimal ventasEfectivo =
+                saleRepository.sumTotalByCajaAndPaymentMethod(
+                        caja,
+                        "EFECTIVO");
 
         BigDecimal ingresos =
                 cashMovementRepository
@@ -120,7 +118,7 @@ public class CashRegisterServiceImpl
 
         BigDecimal efectivoEsperado =
                 caja.getMontoInicial()
-                        .add(ventas)
+                        .add(ventasEfectivo)
                         .add(ingresos)
                         .subtract(retiros);
 
@@ -144,7 +142,22 @@ public class CashRegisterServiceImpl
 
     @Override
     @Transactional(readOnly = true)
-    public CashRegisterResponse findOpen() {
+    public CashRegisterStatusResponse findOpen() {
+
+        boolean cajaAbierta =
+                repository.existsByEstado(
+                        CashRegisterStatus.ABIERTA);
+
+        return new CashRegisterStatusResponse(
+                cajaAbierta
+                        ? CashRegisterStatus.ABIERTA
+                        : CashRegisterStatus.CERRADA
+        );
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public CashRegisterResponse findOpenAdministrative() {
 
         CashRegister caja =
                 repository.findByEstado(

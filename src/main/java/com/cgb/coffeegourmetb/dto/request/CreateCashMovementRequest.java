@@ -1,51 +1,37 @@
 package com.cgb.coffeegourmetb.dto.request;
 
-import jakarta.validation.constraints.DecimalMin;
+import com.cgb.coffeegourmetb.enums.CashMovementType;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
 
 public class CreateCashMovementRequest {
 
-    @NotNull
-    private Long cajaId;
+    @NotNull(message = "El tipo de movimiento es obligatorio.")
+    private CashMovementType tipoMovimiento;
 
-    @NotNull
-    private Long usuarioId;
-
-    @NotNull
-    private String tipoMovimiento;
-
-    @NotNull
-    @DecimalMin("0.01")
+    @NotNull(message = "El monto es obligatorio.")
+    @Positive(message = "El monto debe ser mayor que cero.")
     private BigDecimal monto;
 
+    @Size(
+            max = 500,
+            message = "La descripción no puede superar los 500 caracteres."
+    )
     private String descripcion;
 
     public CreateCashMovementRequest() {
     }
 
-    public Long getCajaId() {
-        return cajaId;
-    }
-
-    public void setCajaId(Long cajaId) {
-        this.cajaId = cajaId;
-    }
-
-    public Long getUsuarioId() {
-        return usuarioId;
-    }
-
-    public void setUsuarioId(Long usuarioId) {
-        this.usuarioId = usuarioId;
-    }
-
-    public String getTipoMovimiento() {
+    public CashMovementType getTipoMovimiento() {
         return tipoMovimiento;
     }
 
-    public void setTipoMovimiento(String tipoMovimiento) {
+    public void setTipoMovimiento(
+            CashMovementType tipoMovimiento) {
+
         this.tipoMovimiento = tipoMovimiento;
     }
 

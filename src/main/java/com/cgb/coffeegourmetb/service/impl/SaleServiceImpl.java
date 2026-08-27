@@ -181,23 +181,6 @@ public class SaleServiceImpl implements SaleService {
         Sale ventaGuardada = saleRepository.save(sale);
 
         /*
-         * Solo las ventas pagadas en efectivo
-         * incrementan el efectivo esperado de la caja.
-         */
-        if ("EFECTIVO".equalsIgnoreCase(
-                ventaGuardada.getMetodoPago().getNombre())) {
-
-            caja.setEfectivoEsperado(
-                    caja.getEfectivoEsperado() == null
-                            ? ventaGuardada.getTotal()
-                            : caja.getEfectivoEsperado()
-                            .add(ventaGuardada.getTotal()));
-
-            cashRegisterRepository.save(caja);
-        }
-
-        cashRegisterRepository.save(caja);
-        /*
          * Se descuenta el inventario después de guardar
          * la venta.
          *
@@ -337,20 +320,6 @@ public class SaleServiceImpl implements SaleService {
         sale.setUsuarioAnulacion(usuarioAnulacion);
         sale.setMotivoAnulacion(request.getMotivo());
 
-        /*
-         * Solo una venta pagada en efectivo afecta
-         * nuevamente el efectivo esperado al ser anulada.
-         */
-        if (sale.getCaja() != null
-                && "EFECTIVO".equalsIgnoreCase(
-                sale.getMetodoPago().getNombre())) {
-
-            sale.getCaja().setEfectivoEsperado(
-                    sale.getCaja().getEfectivoEsperado()
-                            .subtract(sale.getTotal()));
-
-            cashRegisterRepository.save(sale.getCaja());
-        }
         saleRepository.save(sale);
     }
 

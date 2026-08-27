@@ -1,6 +1,7 @@
 package com.cgb.coffeegourmetb.dto.response;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public class DashboardResponse {
 
@@ -14,8 +15,6 @@ public class DashboardResponse {
 
     private Long productosStockBajo;
 
-    // Indicadores generales
-
     private Long totalVentas;
     private BigDecimal totalIngresos;
 
@@ -23,6 +22,14 @@ public class DashboardResponse {
     private BigDecimal totalEgresos;
 
     private Long totalProductos;
+
+    private List<VentaRecienteResponse> ventasRecientes;
+
+    private List<DistribucionVentaResponse> distribucionVentas;
+
+    private List<ProductoMasVendidoResponse> productosMasVendidos;
+
+    private List<VentaPorMesResponse> ventasPorMes;
 
     public DashboardResponse() {
     }
@@ -122,4 +129,41 @@ public class DashboardResponse {
     public void setTotalProductos(Long totalProductos) {
         this.totalProductos = totalProductos;
     }
+
+    public List<VentaRecienteResponse> getVentasRecientes() {
+        return ventasRecientes;
+    }
+
+    public void setVentasRecientes(List<VentaRecienteResponse> ventasRecientes) {
+        this.ventasRecientes = ventasRecientes;
+    }
+
+    public List<DistribucionVentaResponse> getDistribucionVentas() {
+        return distribucionVentas;
+    }
+
+    public void setDistribucionVentas(List<DistribucionVentaResponse> distribucionVentas) {
+        this.distribucionVentas = distribucionVentas;
+    }
+
+    public List<ProductoMasVendidoResponse> getProductosMasVendidos() {
+        return productosMasVendidos;
+    }
+
+    public void setProductosMasVendidos(
+            List<ProductoMasVendidoResponse> productosMasVendidos) {
+
+        this.productosMasVendidos = productosMasVendidos;
+    }
+
+    public List<VentaPorMesResponse> getVentasPorMes() {
+        return ventasPorMes;
+    }
+
+    public void setVentasPorMes(
+            List<VentaPorMesResponse> ventasPorMes) {
+
+        this.ventasPorMes = ventasPorMes;
+    }
+
 }

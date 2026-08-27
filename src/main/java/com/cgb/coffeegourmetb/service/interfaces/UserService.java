@@ -2,6 +2,7 @@ package com.cgb.coffeegourmetb.service.interfaces;
 
 import com.cgb.coffeegourmetb.dto.request.CreateUserRequest;
 import com.cgb.coffeegourmetb.dto.request.UpdateUserRequest;
+import com.cgb.coffeegourmetb.dto.response.OperatorResponse;
 import com.cgb.coffeegourmetb.dto.response.UserResponse;
 
 import java.util.List;
@@ -13,6 +14,8 @@ public interface UserService {
     List<UserResponse> findAllInactive();
 
     UserResponse findById(Long id);
+
+    List<OperatorResponse> findOperators();
 
     UserResponse create(CreateUserRequest request);
 

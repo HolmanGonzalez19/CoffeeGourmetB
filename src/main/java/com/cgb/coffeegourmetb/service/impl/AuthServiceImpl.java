@@ -40,7 +40,10 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public AuthenticationResponse login(
             LoginRequest request) {
-
+        /*System.out.println("valor dde 4561");
+        System.out.println(
+                credentialService.encode("4561")
+        );*/
         User user = userRepository
                 .findByUsuarioAndActivoTrue(
                         request.getUsuario())
