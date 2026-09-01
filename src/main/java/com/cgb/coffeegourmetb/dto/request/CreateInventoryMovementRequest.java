@@ -2,7 +2,6 @@ package com.cgb.coffeegourmetb.dto.request;
 
 import com.cgb.coffeegourmetb.enums.MovementType;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -24,9 +23,7 @@ public class CreateInventoryMovementRequest {
     @Size(max = 255)
     private String motivo;
 
-    @NotBlank(message = "La referencia es obligatoria.")
-    @Size(max = 100)
-    private String referencia;
+    private Long compraId;
 
     public CreateInventoryMovementRequest() {
     }
@@ -71,11 +68,11 @@ public class CreateInventoryMovementRequest {
         this.motivo = motivo;
     }
 
-    public String getReferencia() {
-        return referencia;
+    public Long getCompraId() {
+        return compraId;
     }
 
-    public void setReferencia(String referencia) {
-        this.referencia = referencia;
+    public void setCompraId(Long compraId) {
+        this.compraId = compraId;
     }
 }

@@ -17,7 +17,7 @@ public class InventoryMapper {
 
         response.setProductoId(inventory.getProducto().getId());
         response.setProductoNombre(inventory.getProducto().getNombre());
-
+        response.setStockMinimo(inventory.getProducto().getStockMinimo());
         response.setCantidadActual(inventory.getCantidadActual());
 
         response.setFechaCreacion(inventory.getFechaCreacion());

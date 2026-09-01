@@ -242,10 +242,16 @@ public class CashRegisterServiceImpl
                                 "Usuario autenticado no encontrado."));
     }
 
-    private CashRegisterResponse construirRespuesta(CashRegister caja) {
+    private CashRegisterResponse construirRespuesta(
+            CashRegister caja) {
 
         CashRegisterResponse response =
                 mapper.toResponse(caja);
+
+
+        // ============================================================
+        // VENTAS
+        // ============================================================
 
         BigDecimal ventasEfectivo =
                 saleRepository.sumTotalByCajaAndPaymentMethod(
@@ -260,9 +266,51 @@ public class CashRegisterServiceImpl
         BigDecimal ventasTotales =
                 saleRepository.sumTotalRegisteredByCaja(caja);
 
-        response.setVentasEfectivo(ventasEfectivo);
-        response.setVentasTransferencia(ventasTransferencia);
-        response.setVentasTotales(ventasTotales);
+
+        // ============================================================
+        // MOVIMIENTOS DE CAJA
+        // ============================================================
+
+        BigDecimal ingresos =
+                cashMovementRepository
+                        .sumMontoByCajaAndTipoMovimiento(
+                                caja,
+                                CashMovementType.INGRESO);
+
+        BigDecimal retiros =
+                cashMovementRepository
+                        .sumMontoByCajaAndTipoMovimiento(
+                                caja,
+                                CashMovementType.RETIRO);
+
+
+        // ============================================================
+        // EFECTIVO ESPERADO
+        // ============================================================
+
+        BigDecimal efectivoEsperado =
+                caja.getMontoInicial()
+                        .add(ventasEfectivo)
+                        .add(ingresos)
+                        .subtract(retiros);
+
+
+        // ============================================================
+        // RESPUESTA
+        // ============================================================
+
+        response.setVentasEfectivo(
+                ventasEfectivo);
+
+        response.setVentasTransferencia(
+                ventasTransferencia);
+
+        response.setVentasTotales(
+                ventasTotales);
+
+        response.setEfectivoEsperado(
+                efectivoEsperado);
+
 
         return response;
     }

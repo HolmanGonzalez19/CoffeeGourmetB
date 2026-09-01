@@ -3,11 +3,9 @@ package com.cgb.coffeegourmetb.dto.request;
 import com.cgb.coffeegourmetb.enums.ProductType;
 import jakarta.validation.constraints.*;
 
-public class CreateProductRequest {
+import java.math.BigDecimal;
 
-    @NotBlank(message = "El código es obligatorio.")
-    @Size(max = 30)
-    private String codigo;
+public class CreateProductRequest {
 
     @NotBlank(message = "El nombre es obligatorio.")
     @Size(max = 150)
@@ -29,15 +27,23 @@ public class CreateProductRequest {
     @Size(max = 255)
     private String descripcion;
 
+    @NotNull(message = "El precio de compra es obligatorio.")
+    @DecimalMin(
+            value = "0.00",
+            inclusive = true,
+            message = "El precio de compra no puede ser negativo."
+    )
+    private BigDecimal precioCompra;
+
+    @NotNull(message = "El precio de venta es obligatorio.")
+    @DecimalMin(
+            value = "0.01",
+            inclusive = true,
+            message = "El precio de venta debe ser mayor que cero."
+    )
+    private BigDecimal precioVenta;
+
     public CreateProductRequest() {
-    }
-
-    public String getCodigo() {
-        return codigo;
-    }
-
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
     }
 
     public String getNombre() {
@@ -86,5 +92,21 @@ public class CreateProductRequest {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
+    }
+
+    public BigDecimal getPrecioCompra() {
+        return precioCompra;
+    }
+
+    public void setPrecioCompra(BigDecimal precioCompra) {
+        this.precioCompra = precioCompra;
+    }
+
+    public BigDecimal getPrecioVenta() {
+        return precioVenta;
+    }
+
+    public void setPrecioVenta(BigDecimal precioVenta) {
+        this.precioVenta = precioVenta;
     }
 }

@@ -3,6 +3,8 @@ package com.cgb.coffeegourmetb.service.interfaces;
 import com.cgb.coffeegourmetb.dto.request.CancelSaleRequest;
 import com.cgb.coffeegourmetb.dto.request.CreateSaleRequest;
 import com.cgb.coffeegourmetb.dto.response.SaleResponse;
+import com.cgb.coffeegourmetb.dto.request.SaleFilterRequest;
+import com.cgb.coffeegourmetb.dto.response.PagedResponse;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -38,4 +40,7 @@ public interface SaleService {
     BigDecimal totalVentasDelDia(LocalDate fecha);
 
     Long productosVendidosDelDia(LocalDate fecha);
+
+    PagedResponse<SaleResponse> search(SaleFilterRequest filter, int page, int size);
+
 }

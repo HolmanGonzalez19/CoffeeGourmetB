@@ -15,9 +15,6 @@ public class CreatePurchaseRequest {
     @NotNull
     private Long usuarioId;
 
-    @NotBlank
-    private String numeroRecibo;
-
     private String observacion;
 
     @Valid
@@ -41,14 +38,6 @@ public class CreatePurchaseRequest {
 
     public void setUsuarioId(Long usuarioId) {
         this.usuarioId = usuarioId;
-    }
-
-    public String getNumeroRecibo() {
-        return numeroRecibo;
-    }
-
-    public void setNumeroRecibo(String numeroRecibo) {
-        this.numeroRecibo = numeroRecibo;
     }
 
     public String getObservacion() {

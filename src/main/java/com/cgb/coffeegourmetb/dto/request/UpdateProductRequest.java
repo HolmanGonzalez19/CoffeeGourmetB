@@ -3,11 +3,9 @@ package com.cgb.coffeegourmetb.dto.request;
 import com.cgb.coffeegourmetb.enums.ProductType;
 import jakarta.validation.constraints.*;
 
-public class UpdateProductRequest {
+import java.math.BigDecimal;
 
-    @NotBlank(message = "El código es obligatorio.")
-    @Size(max = 30)
-    private String codigo;
+public class UpdateProductRequest {
 
     @NotBlank(message = "El nombre es obligatorio.")
     @Size(max = 150)
@@ -32,15 +30,15 @@ public class UpdateProductRequest {
     @NotNull(message = "El estado es obligatorio.")
     private Boolean activo;
 
+    @NotNull(message = "El precio de compra es obligatorio.")
+    @DecimalMin(value = "0.0", inclusive = false)
+    private BigDecimal precioCompra;
+
+    @NotNull(message = "El precio de venta es obligatorio.")
+    @DecimalMin(value = "0.0", inclusive = false)
+    private BigDecimal precioVenta;
+
     public UpdateProductRequest() {
-    }
-
-    public String getCodigo() {
-        return codigo;
-    }
-
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
     }
 
     public String getNombre() {
@@ -97,5 +95,21 @@ public class UpdateProductRequest {
 
     public void setActivo(Boolean activo) {
         this.activo = activo;
+    }
+
+    public BigDecimal getPrecioCompra() {
+        return precioCompra;
+    }
+
+    public void setPrecioCompra(BigDecimal precioCompra) {
+        this.precioCompra = precioCompra;
+    }
+
+    public BigDecimal getPrecioVenta() {
+        return precioVenta;
+    }
+
+    public void setPrecioVenta(BigDecimal precioVenta) {
+        this.precioVenta = precioVenta;
     }
 }

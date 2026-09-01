@@ -15,8 +15,6 @@ public interface PurchaseService {
 
     PurchaseResponse create(CreatePurchaseRequest request);
 
-    PurchaseResponse findByReceipt(String numeroRecibo);
-
     List<PurchaseResponse> findBySupplier(Long supplierId);
 
     List<PurchaseResponse> findByUser(Long userId);

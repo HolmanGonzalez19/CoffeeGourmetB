@@ -89,7 +89,7 @@ public class DashboardServiceImpl
                         fin));
 
         response.setVentasHoy(
-                saleRepository.countVentasHoy(
+                saleRepository.countSales(
                         inicio,
                         fin));
 

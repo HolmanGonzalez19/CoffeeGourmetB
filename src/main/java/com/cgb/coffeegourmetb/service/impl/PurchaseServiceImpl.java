@@ -22,8 +22,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -63,7 +63,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     public List<PurchaseResponse> findAll() {
 
         return purchaseRepository
-                .findAll()
+                .findAllByOrderByFechaDesc()
                 .stream()
                 .map(mapper::toResponse)
                 .toList();
@@ -84,12 +84,6 @@ public class PurchaseServiceImpl implements PurchaseService {
     @Override
     public PurchaseResponse create(CreatePurchaseRequest request) {
 
-        if (purchaseRepository.existsByNumeroRecibo(request.getNumeroRecibo())) {
-
-            throw new BusinessException(
-                    "Ya existe una compra con ese número de recibo.");
-        }
-
         Supplier supplier = supplierRepository
                 .findByIdAndActivoTrue(request.getProveedorId())
                 .orElseThrow(() ->
@@ -102,37 +96,73 @@ public class PurchaseServiceImpl implements PurchaseService {
                         new ResourceNotFoundException(
                                 "Usuario no encontrado."));
 
+        /*
+         * Crear la compra.
+         */
         Purchase purchase = new Purchase();
 
         purchase.setProveedor(supplier);
         purchase.setUsuario(user);
-        purchase.setNumeroRecibo(request.getNumeroRecibo());
+
+        /*
+         * El código interno se genera automáticamente.
+         *
+         * Se utiliza un código temporal basado en la
+         * secuencia de la base de datos.
+         */
+        String codigoCompra =
+                generarCodigoCompra();
+
+        purchase.setCodigoCompra(codigoCompra);
+
         purchase.setFecha(LocalDateTime.now());
-        purchase.setObservacion(request.getObservacion());
+
+        purchase.setObservacion(
+                request.getObservacion()
+        );
+
         purchase.setTotal(BigDecimal.ZERO);
-        purchase.setEstado(PurchaseStatus.REGISTRADA);
+
+        purchase.setEstado(
+                PurchaseStatus.REGISTRADA
+        );
 
         purchase = purchaseRepository.save(purchase);
 
         BigDecimal total = BigDecimal.ZERO;
 
-        for (CreatePurchaseDetailRequest detailRequest : request.getDetalles()) {
+        /*
+         * Registrar detalles de la compra.
+         */
+        for (CreatePurchaseDetailRequest detailRequest :
+                request.getDetalles()) {
 
-            Product product = productRepository.findById(detailRequest.getProductoId())
+            Product product = productRepository
+                    .findById(detailRequest.getProductoId())
                     .orElseThrow(() ->
                             new ResourceNotFoundException(
                                     "Producto no encontrado con id: "
                                             + detailRequest.getProductoId()));
 
-            BigDecimal subtotal = detailRequest.getPrecioCompra()
-                    .multiply(BigDecimal.valueOf(detailRequest.getCantidad()));
+            BigDecimal subtotal =
+                    detailRequest.getPrecioCompra()
+                            .multiply(
+                                    BigDecimal.valueOf(
+                                            detailRequest.getCantidad()));
 
-            PurchaseDetail detail = new PurchaseDetail();
+            PurchaseDetail detail =
+                    new PurchaseDetail();
 
             detail.setCompra(purchase);
+
             detail.setProducto(product);
-            detail.setCantidad(detailRequest.getCantidad());
-            detail.setPrecioCompra(detailRequest.getPrecioCompra());
+
+            detail.setCantidad(
+                    detailRequest.getCantidad());
+
+            detail.setPrecioCompra(
+                    detailRequest.getPrecioCompra());
+
             detail.setSubtotal(subtotal);
 
             purchaseDetailRepository.save(detail);
@@ -140,7 +170,11 @@ public class PurchaseServiceImpl implements PurchaseService {
             total = total.add(subtotal);
 
             /*
-             * Actualiza inventario y registra el movimiento.
+             * La compra genera automáticamente
+             * una entrada de inventario.
+             *
+             * La referencia utiliza el código interno
+             * generado automáticamente.
              */
             inventoryTransactionService.processMovement(
                     product.getId(),
@@ -148,11 +182,11 @@ public class PurchaseServiceImpl implements PurchaseService {
                     MovementType.ENTRADA,
                     detailRequest.getCantidad(),
                     "Compra proveedor",
-                    request.getNumeroRecibo()
+                    purchase.getCodigoCompra()
             );
 
             /*
-             * Actualiza el historial de precios.
+             * Actualizar historial de precios.
              */
             priceHistoryService.updatePurchasePrice(
                     product.getId(),
@@ -160,6 +194,9 @@ public class PurchaseServiceImpl implements PurchaseService {
             );
         }
 
+        /*
+         * Actualizar el total definitivo.
+         */
         purchase.setTotal(total);
 
         purchase = purchaseRepository.save(purchase);
@@ -168,49 +205,59 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
 
     /*
-        Buscar por número de recibo
+     * Genera el código interno de la compra.
+     *
+     * Formato:
+     *
+     * COMP-000001
+     * COMP-000002
+     * COMP-000003
+     *
+     * El usuario nunca debe escribir este código.
      */
-    @Override
-    public PurchaseResponse findByReceipt(String numeroRecibo) {
+    private String generarCodigoCompra() {
 
-        Purchase purchase = purchaseRepository
-                .findByNumeroRecibo(numeroRecibo)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "No existe una compra con el recibo: "
-                                        + numeroRecibo));
+        Long siguienteId =
+                purchaseRepository.findNextId();
 
-        return mapper.toResponse(purchase);
+        return String.format(
+                "COMP-%06d",
+                siguienteId
+        );
     }
 
     /*
-        Buscar por proveedor
+     * Buscar compras por proveedor.
      */
     @Override
-    public List<PurchaseResponse> findBySupplier(Long supplierId) {
+    public List<PurchaseResponse> findBySupplier(
+            Long supplierId) {
 
         return purchaseRepository
-                .findByProveedorIdOrderByFechaDesc(supplierId)
+                .findByProveedorIdOrderByFechaDesc(
+                        supplierId)
                 .stream()
                 .map(mapper::toResponse)
                 .toList();
     }
 
     /*
-        Buscar por usuario
+     * Buscar compras por usuario.
      */
     @Override
-    public List<PurchaseResponse> findByUser(Long userId) {
+    public List<PurchaseResponse> findByUser(
+            Long userId) {
 
         return purchaseRepository
-                .findByUsuarioIdOrderByFechaDesc(userId)
+                .findByUsuarioIdOrderByFechaDesc(
+                        userId)
                 .stream()
                 .map(mapper::toResponse)
                 .toList();
     }
 
     /*
-        Buscar entre fechas
+     * Buscar compras entre fechas.
      */
     @Override
     public List<PurchaseResponse> findBetweenDates(
@@ -227,7 +274,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
 
     /*
-        Compras del día
+     * Compras realizadas hoy.
      */
     @Override
     public List<PurchaseResponse> findToday() {
@@ -236,81 +283,89 @@ public class PurchaseServiceImpl implements PurchaseService {
 
         return findBetweenDates(
                 hoy.atStartOfDay(),
-                hoy.plusDays(1).atStartOfDay().minusNanos(1));
+                hoy.plusDays(1)
+                        .atStartOfDay()
+                        .minusNanos(1));
     }
 
     /*
-        Compras del mes
+     * Compras realizadas durante el mes actual.
      */
     @Override
     public List<PurchaseResponse> findCurrentMonth() {
 
-        LocalDate inicio = LocalDate.now()
-                .withDayOfMonth(1);
+        LocalDate inicio =
+                LocalDate.now()
+                        .withDayOfMonth(1);
 
-        LocalDate fin = inicio.plusMonths(1)
-                .minusDays(1);
+        LocalDate fin =
+                inicio.plusMonths(1)
+                        .minusDays(1);
 
         return findBetweenDates(
                 inicio.atStartOfDay(),
-                fin.atTime(23,59,59));
+                fin.atTime(23, 59, 59));
     }
 
     /*
-        Cancelar compra
+     * Anular compra.
      */
     @Override
     public void cancel(
             Long purchaseId,
             CancelPurchaseRequest request) {
 
-        Purchase purchase = purchaseRepository.findById(purchaseId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "No existe la compra con id: " + purchaseId));
+        Purchase purchase =
+                purchaseRepository
+                        .findById(purchaseId)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "No existe una compra con id: "
+                                                + purchaseId));
 
-        if (purchase.getEstado() == PurchaseStatus.ANULADA) {
+        if (purchase.getEstado() ==
+                PurchaseStatus.ANULADA) {
 
             throw new BusinessException(
                     "La compra ya fue anulada.");
-
         }
 
-        User user = userRepository
-                .findByIdAndActivoTrue(request.getUsuarioId())
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Usuario no encontrado."));
+        User user =
+                userRepository
+                        .findByIdAndActivoTrue(
+                                request.getUsuarioId())
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "Usuario no encontrado."));
 
-        purchase.setEstado(PurchaseStatus.ANULADA);
+        purchase.setEstado(
+                PurchaseStatus.ANULADA);
 
-        purchase.setFechaAnulacion(LocalDateTime.now());
+        purchase.setFechaAnulacion(
+                LocalDateTime.now());
 
         purchase.setUsuarioAnulacion(user);
 
-        purchase.setMotivoAnulacion(request.getMotivo());
+        purchase.setMotivoAnulacion(
+                request.getMotivo());
 
-        for (PurchaseDetail detail : purchase.getDetalles()) {
+        /*
+         * Al anular una compra se revierte
+         * automáticamente la entrada de inventario.
+         */
+        for (PurchaseDetail detail :
+                purchase.getDetalles()) {
 
             inventoryTransactionService.processMovement(
-
                     detail.getProducto().getId(),
-
                     user.getId(),
-
                     MovementType.SALIDA,
-
                     detail.getCantidad(),
-
                     "Anulación compra",
-
-                    purchase.getNumeroRecibo()
-
+                    purchase.getCodigoCompra()
             );
-
         }
 
         purchaseRepository.save(purchase);
-
     }
 }

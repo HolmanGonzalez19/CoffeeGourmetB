@@ -2,6 +2,7 @@ package com.cgb.coffeegourmetb.service.interfaces;
 
 import com.cgb.coffeegourmetb.dto.request.CreateInventoryMovementRequest;
 import com.cgb.coffeegourmetb.dto.response.InventoryMovementResponse;
+import com.cgb.coffeegourmetb.dto.response.InventoryReferenceResponse;
 import com.cgb.coffeegourmetb.dto.response.InventoryResponse;
 
 import java.util.List;
@@ -16,5 +17,7 @@ public interface InventoryService {
 
     InventoryMovementResponse createMovement(
             CreateInventoryMovementRequest request);
+
+    List<InventoryReferenceResponse> references();
 
 }

@@ -28,6 +28,13 @@ import com.cgb.coffeegourmetb.entity.CashRegister;
 import org.springframework.transaction.annotation.Transactional;
 import com.cgb.coffeegourmetb.entity.PriceHistory;
 import com.cgb.coffeegourmetb.repository.PriceHistoryRepository;
+import com.cgb.coffeegourmetb.dto.request.SaleFilterRequest;
+import com.cgb.coffeegourmetb.dto.response.PagedResponse;
+import com.cgb.coffeegourmetb.specification.SaleSpecification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -351,5 +358,65 @@ public class SaleServiceImpl implements SaleService {
         LocalDateTime fin = fecha.atTime(LocalTime.MAX);
 
         return saleDetailRepository.totalProductosVendidos(inicio, fin);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PagedResponse<SaleResponse> search(
+            SaleFilterRequest filter,
+            int page,
+            int size) {
+
+        if (page < 0) {
+
+            throw new BusinessException(
+                    "El número de página no puede ser negativo.");
+        }
+
+        if (size <= 0 || size > 200) {
+
+            throw new BusinessException(
+                    "El tamaño de página debe estar entre 1 y 200.");
+        }
+
+        if (filter != null
+                && filter.getFechaInicio() != null
+                && filter.getFechaFin() != null
+                && filter.getFechaInicio()
+                .isAfter(filter.getFechaFin())) {
+
+            throw new BusinessException(
+                    "La fecha de inicio no puede ser posterior a la fecha final.");
+        }
+
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by(
+                        Sort.Direction.DESC,
+                        "fechaHora"
+                )
+        );
+
+        Page<Sale> result = saleRepository.findAll(
+                SaleSpecification.withFilters(filter),
+                pageable
+        );
+
+        List<SaleResponse> content = result
+                .getContent()
+                .stream()
+                .map(saleMapper::toResponse)
+                .toList();
+
+        return new PagedResponse<>(
+                content,
+                result.getNumber(),
+                result.getSize(),
+                result.getTotalElements(),
+                result.getTotalPages(),
+                result.isFirst(),
+                result.isLast()
+        );
     }
 }

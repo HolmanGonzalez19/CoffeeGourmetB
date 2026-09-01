@@ -52,6 +52,9 @@ public class SaleMapper {
         response.setMetodoPagoNombre(
                 sale.getMetodoPago().getNombre());
 
+        response.setCajaId(
+                sale.getCaja().getId());
+
         response.setFechaHora(
                 sale.getFechaHora());
 

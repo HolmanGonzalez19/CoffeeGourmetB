@@ -34,6 +34,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             String codigoBarras,
             Long id);
 
+    List<Product> findAllByOrderByNombreAsc();
+
     @Query("""
         SELECT p
         FROM Product p
@@ -60,14 +62,14 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findAllActiveWithCurrentPrice();
 
     @Query("""
-        SELECT p, ph.precioVenta
-        FROM Product p
-        LEFT JOIN PriceHistory ph
-            ON ph.producto = p
-            AND ph.activo = true
-        WHERE p.activo = true
-        ORDER BY p.nombre ASC
-        """)
+    SELECT p, ph.precioCompra, ph.precioVenta
+    FROM Product p
+    LEFT JOIN PriceHistory ph
+        ON ph.producto = p
+        AND ph.activo = true
+    WHERE p.activo = true
+    ORDER BY p.nombre ASC
+    """)
     List<Object[]> findAllActiveWithCurrentPriceData();
 
     @Query("""
@@ -91,4 +93,48 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             ORDER BY p.nombre
         """)
     List<ProductPosResponse> findAllForPos();
+
+    @Query("""
+    SELECT p, ph.precioCompra, ph.precioVenta
+    FROM Product p
+    LEFT JOIN PriceHistory ph
+        ON ph.producto = p
+        AND ph.activo = true
+    WHERE p.activo = false
+    ORDER BY p.nombre ASC
+    """)
+    List<Object[]> findAllInactiveWithCurrentPriceData();
+
+
+    @Query("""
+    SELECT p, ph.precioCompra, ph.precioVenta
+    FROM Product p
+    LEFT JOIN PriceHistory ph
+        ON ph.producto = p
+        AND ph.activo = true
+    ORDER BY p.nombre ASC
+    """)
+    List<Object[]> findAllWithCurrentPriceData();
+
+
+    @Query(
+            value = """
+        SELECT COALESCE(MAX(id), 0) + 1
+        FROM coffeegourmet.productos
+        """,
+            nativeQuery = true
+    )
+    Long findNextId();
+
+
+    @Query("""
+    SELECT p, ph.precioCompra, ph.precioVenta
+    FROM Product p
+    LEFT JOIN PriceHistory ph
+        ON ph.producto = p
+        AND ph.activo = true
+    WHERE p.id = :id
+    AND p.activo = true
+    """)
+    Optional<Object[]> findByIdWithCurrentPriceData(Long id);
 }

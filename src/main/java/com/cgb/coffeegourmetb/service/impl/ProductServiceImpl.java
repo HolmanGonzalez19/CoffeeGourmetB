@@ -16,6 +16,10 @@ import com.cgb.coffeegourmetb.repository.ProductRepository;
 import com.cgb.coffeegourmetb.service.interfaces.ProductService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import com.cgb.coffeegourmetb.entity.PriceHistory;
+import com.cgb.coffeegourmetb.repository.PriceHistoryRepository;
+
+import java.time.LocalDateTime;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -28,16 +32,19 @@ public class ProductServiceImpl implements ProductService {
     private final CategoryRepository categoryRepository;
     private final InventoryRepository inventoryRepository;
     private final ProductMapper productMapper;
+    private final PriceHistoryRepository priceHistoryRepository;
 
     public ProductServiceImpl(
             ProductRepository productRepository,
             CategoryRepository categoryRepository,
             InventoryRepository inventoryRepository,
+            PriceHistoryRepository priceHistoryRepository,
             ProductMapper productMapper) {
 
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.inventoryRepository = inventoryRepository;
+        this.priceHistoryRepository = priceHistoryRepository;
         this.productMapper = productMapper;
     }
 
@@ -51,11 +58,16 @@ public class ProductServiceImpl implements ProductService {
 
                     Product product = (Product) row[0];
 
-                    BigDecimal precioVenta =
+                    BigDecimal precioCompra =
                             (BigDecimal) row[1];
+
+                    BigDecimal precioVenta =
+                            (BigDecimal) row[2];
+
 
                     return productMapper.toResponse(
                             product,
+                            precioCompra,
                             precioVenta);
                 })
                 .toList();
@@ -64,52 +76,125 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductResponse> findAllInactive() {
 
-        return productRepository.findByActivoFalse()
+        return productRepository
+                .findAllInactiveWithCurrentPriceData()
                 .stream()
-                .map(productMapper::toResponse)
+                .map(row -> {
+
+                    Product product = (Product) row[0];
+
+                    BigDecimal precioCompra =
+                            (BigDecimal) row[1];
+
+                    BigDecimal precioVenta =
+                            (BigDecimal) row[2];
+
+                    return productMapper.toResponse(
+                            product,
+                            precioCompra,
+                            precioVenta);
+                })
                 .toList();
     }
 
     @Override
     public ProductResponse findById(Long id) {
 
-        Product product = productRepository
-                .findByIdAndActivoTrue(id)
+        Object[] row = productRepository
+                .findByIdWithCurrentPriceData(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
                                 "No existe un producto activo con id: "
                                         + id));
 
-        return productMapper.toResponse(product);
+        Product product =
+                (Product) row[0];
+
+        BigDecimal precioCompra =
+                (BigDecimal) row[1];
+
+        BigDecimal precioVenta =
+                (BigDecimal) row[2];
+
+        return productMapper.toResponse(
+                product,
+                precioCompra,
+                precioVenta);
     }
 
     @Override
     public ProductResponse create(
             CreateProductRequest request) {
 
-        validateCode(request.getCodigo());
         validateBarcode(request.getCodigoBarras());
         validateName(request.getNombre());
 
         Category category =
                 findCategory(request.getCategoriaId());
 
+        // ==========================================
+        // GENERAR CÓDIGO AUTOMÁTICAMENTE
+        // ==========================================
+
+        String codigo = generarCodigoProducto();
+
+        // ==========================================
+        // CREAR PRODUCTO
+        // ==========================================
+
         Product product =
                 productMapper.toEntity(
                         request,
                         category);
 
-        Product saved =
+        product.setCodigo(codigo);
+
+        Product savedProduct =
                 productRepository.save(product);
+
+        // ==========================================
+        // CREAR INVENTARIO INICIAL
+        // ==========================================
 
         Inventory inventory = new Inventory();
 
-        inventory.setProducto(saved);
+        inventory.setProducto(savedProduct);
         inventory.setCantidadActual(0);
 
         inventoryRepository.save(inventory);
 
-        return productMapper.toResponse(saved);
+        // ==========================================
+        // CREAR PRECIO INICIAL
+        // ==========================================
+
+        PriceHistory priceHistory =
+                new PriceHistory();
+
+        priceHistory.setProducto(savedProduct);
+
+        priceHistory.setPrecioCompra(
+                request.getPrecioCompra());
+
+        priceHistory.setPrecioVenta(
+                request.getPrecioVenta());
+
+        priceHistory.setFechaInicio(
+                LocalDateTime.now());
+
+        priceHistory.setFechaFin(null);
+
+        priceHistory.setActivo(true);
+
+        priceHistoryRepository.save(priceHistory);
+
+        // ==========================================
+        // RESPUESTA
+        // ==========================================
+
+        return productMapper.toResponse(
+                savedProduct,
+                request.getPrecioCompra(),
+                request.getPrecioVenta());
     }
 
     @Override
@@ -118,10 +203,6 @@ public class ProductServiceImpl implements ProductService {
             UpdateProductRequest request) {
 
         Product product = findProduct(id);
-
-        validateCodeForUpdate(
-                request.getCodigo(),
-                id);
 
         validateBarcodeForUpdate(
                 request.getCodigoBarras(),
@@ -135,6 +216,10 @@ public class ProductServiceImpl implements ProductService {
                 findCategory(
                         request.getCategoriaId());
 
+        // ==========================================
+        // ACTUALIZAR DATOS DEL PRODUCTO
+        // ==========================================
+
         productMapper.updateEntity(
                 request,
                 product,
@@ -143,7 +228,63 @@ public class ProductServiceImpl implements ProductService {
         Product updated =
                 productRepository.save(product);
 
-        return productMapper.toResponse(updated);
+        // ==========================================
+        // ACTUALIZAR HISTORIAL DE PRECIOS
+        // ==========================================
+
+        PriceHistory precioActual =
+                priceHistoryRepository
+                        .findByProductoIdAndActivoTrue(id)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "No existe un precio activo para el producto con id: "
+                                                + id));
+
+        boolean cambioPrecio =
+                !precioActual.getPrecioCompra()
+                        .equals(request.getPrecioCompra())
+                        ||
+                        !precioActual.getPrecioVenta()
+                                .equals(request.getPrecioVenta());
+
+        if (cambioPrecio) {
+
+            LocalDateTime ahora =
+                    LocalDateTime.now();
+
+            // Cerrar precio actual
+            precioActual.setFechaFin(ahora);
+            precioActual.setActivo(false);
+
+            priceHistoryRepository.save(precioActual);
+
+            // Crear nuevo historial
+            PriceHistory nuevoPrecio =
+                    new PriceHistory();
+
+            nuevoPrecio.setProducto(updated);
+
+            nuevoPrecio.setPrecioCompra(
+                    request.getPrecioCompra());
+
+            nuevoPrecio.setPrecioVenta(
+                    request.getPrecioVenta());
+
+            nuevoPrecio.setFechaInicio(ahora);
+            nuevoPrecio.setFechaFin(null);
+            nuevoPrecio.setActivo(true);
+
+            priceHistoryRepository.save(nuevoPrecio);
+        }
+
+        // ==========================================
+        // RESPUESTA
+        // ==========================================
+
+        return productMapper.toResponse(
+                updated,
+                request.getPrecioCompra(),
+                request.getPrecioVenta());
     }
 
     @Override
@@ -170,6 +311,30 @@ public class ProductServiceImpl implements ProductService {
     public List<ProductPosResponse> findAllForPos() {
 
         return productRepository.findAllForPos();
+    }
+
+    @Override
+    public List<ProductResponse> findAllProducts() {
+
+        return productRepository
+                .findAllWithCurrentPriceData()
+                .stream()
+                .map(row -> {
+
+                    Product product = (Product) row[0];
+
+                    BigDecimal precioCompra =
+                            (BigDecimal) row[1];
+
+                    BigDecimal precioVenta =
+                            (BigDecimal) row[2];
+
+                    return productMapper.toResponse(
+                            product,
+                            precioCompra,
+                            precioVenta);
+                })
+                .toList();
     }
 
     // ==========================
@@ -272,5 +437,14 @@ public class ProductServiceImpl implements ProductService {
                     "Ya existe otro producto con el nombre: "
                             + nombre);
         }
+    }
+    private String generarCodigoProducto() {
+
+        Long siguienteId =
+                productRepository.findNextId();
+
+        return String.format(
+                "PROD-%06d",
+                siguienteId);
     }
 }

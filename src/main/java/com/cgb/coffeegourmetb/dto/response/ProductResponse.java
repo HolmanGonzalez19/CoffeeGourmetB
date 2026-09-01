@@ -23,6 +23,7 @@ public class ProductResponse {
     private String descripcion;
 
     private BigDecimal precioVenta;
+    private BigDecimal precioCompra;
 
     private Boolean activo;
 
@@ -111,6 +112,14 @@ public class ProductResponse {
 
     public void setPrecioVenta(BigDecimal precioVenta) {
         this.precioVenta = precioVenta;
+    }
+
+    public BigDecimal getPrecioCompra() {
+        return precioCompra;
+    }
+
+    public void setPrecioCompra(BigDecimal precioCompra) {
+        this.precioCompra = precioCompra;
     }
 
     public Boolean getActivo() {

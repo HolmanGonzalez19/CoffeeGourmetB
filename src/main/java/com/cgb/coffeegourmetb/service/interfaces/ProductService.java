@@ -48,4 +48,6 @@ public interface ProductService {
      * Desactiva un producto.
      */
     void deactivate(Long id);
+
+    List<ProductResponse> findAllProducts();
 }

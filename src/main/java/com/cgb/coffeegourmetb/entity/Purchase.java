@@ -20,13 +20,23 @@ public class Purchase extends BaseAuditEntity {
     @JoinColumn(name = "usuario_id", nullable = false)
     private User usuario;
 
-    @Column(name = "numero_recibo", nullable = false, unique = true, length = 100)
-    private String numeroRecibo;
+    @Column(
+            name = "codigo_compra",
+            nullable = false,
+            unique = true,
+            length = 20
+    )
+    private String codigoCompra;
 
     @Column(name = "fecha", nullable = false)
     private LocalDateTime fecha;
 
-    @Column(name = "total", nullable = false, precision = 14, scale = 2)
+    @Column(
+            name = "total",
+            nullable = false,
+            precision = 14,
+            scale = 2
+    )
     private BigDecimal total;
 
     @Column(name = "observacion")
@@ -56,6 +66,14 @@ public class Purchase extends BaseAuditEntity {
     public Purchase() {
     }
 
+    public String getCodigoCompra() {
+        return codigoCompra;
+    }
+
+    public void setCodigoCompra(String codigoCompra) {
+        this.codigoCompra = codigoCompra;
+    }
+
     public Supplier getProveedor() {
         return proveedor;
     }
@@ -70,14 +88,6 @@ public class Purchase extends BaseAuditEntity {
 
     public void setUsuario(User usuario) {
         this.usuario = usuario;
-    }
-
-    public String getNumeroRecibo() {
-        return numeroRecibo;
-    }
-
-    public void setNumeroRecibo(String numeroRecibo) {
-        this.numeroRecibo = numeroRecibo;
     }
 
     public LocalDateTime getFecha() {
@@ -104,19 +114,11 @@ public class Purchase extends BaseAuditEntity {
         this.observacion = observacion;
     }
 
-    public List<PurchaseDetail> getDetalles() {
-        return detalles;
-    }
-
-    public void setDetalles(List<PurchaseDetail> detalles) {
-        this.detalles = detalles;
-    }
-
-    public PurchaseStatus  getEstado() {
+    public PurchaseStatus getEstado() {
         return estado;
     }
 
-    public void setEstado(PurchaseStatus  estado) {
+    public void setEstado(PurchaseStatus estado) {
         this.estado = estado;
     }
 
@@ -142,5 +144,13 @@ public class Purchase extends BaseAuditEntity {
 
     public void setMotivoAnulacion(String motivoAnulacion) {
         this.motivoAnulacion = motivoAnulacion;
+    }
+
+    public List<PurchaseDetail> getDetalles() {
+        return detalles;
+    }
+
+    public void setDetalles(List<PurchaseDetail> detalles) {
+        this.detalles = detalles;
     }
 }

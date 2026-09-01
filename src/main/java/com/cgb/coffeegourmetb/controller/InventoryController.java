@@ -2,6 +2,7 @@ package com.cgb.coffeegourmetb.controller;
 
 import com.cgb.coffeegourmetb.dto.request.CreateInventoryMovementRequest;
 import com.cgb.coffeegourmetb.dto.response.InventoryMovementResponse;
+import com.cgb.coffeegourmetb.dto.response.InventoryReferenceResponse;
 import com.cgb.coffeegourmetb.dto.response.InventoryResponse;
 import com.cgb.coffeegourmetb.service.interfaces.InventoryService;
 import com.cgb.coffeegourmetb.util.constants.ApiPaths;
@@ -73,6 +74,15 @@ public class InventoryController {
             CreateInventoryMovementRequest request){
 
         return service.createMovement(request);
+
+    }
+
+    @Operation(summary = "Consultar referencias disponibles para movimientos")
+    @PreAuthorize(INVENTORY_READ)
+    @GetMapping("/references")
+    public List<InventoryReferenceResponse> references() {
+
+        return service.references();
 
     }
 

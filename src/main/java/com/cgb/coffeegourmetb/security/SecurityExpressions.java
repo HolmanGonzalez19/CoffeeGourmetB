@@ -115,40 +115,40 @@ public final class SecurityExpressions {
     // PRODUCTOS
     // =========================================================
 
-    public static final String PRODUCT_READ =
-            "hasAuthority('" + PermissionConstants.PRODUCT_READ + "')";
+    public static final String PRODUCTS_READ =
+            "hasAuthority('" + PermissionConstants.PRODUCTS_READ + "')";
 
-    public static final String PRODUCT_CREATE =
-            "hasAuthority('" + PermissionConstants.PRODUCT_CREATE + "')";
+    public static final String PRODUCTS_CREATE =
+            "hasAuthority('" + PermissionConstants.PRODUCTS_CREATE + "')";
 
-    public static final String PRODUCT_UPDATE =
-            "hasAuthority('" + PermissionConstants.PRODUCT_UPDATE + "')";
+    public static final String PRODUCTS_UPDATE =
+            "hasAuthority('" + PermissionConstants.PRODUCTS_UPDATE + "')";
 
-    public static final String PRODUCT_ACTIVATE =
-            "hasAuthority('" + PermissionConstants.PRODUCT_ACTIVATE + "')";
+    public static final String PRODUCTS_ACTIVATE =
+            "hasAuthority('" + PermissionConstants.PRODUCTS_ACTIVATE + "')";
 
-    public static final String PRODUCT_DEACTIVATE =
-            "hasAuthority('" + PermissionConstants.PRODUCT_DEACTIVATE + "')";
+    public static final String PRODUCTS_DEACTIVATE =
+            "hasAuthority('" + PermissionConstants.PRODUCTS_DEACTIVATE + "')";
 
 
     // =========================================================
     // PROVEEDORES
     // =========================================================
 
-    public static final String SUPPLIER_READ =
-            "hasAuthority('" + PermissionConstants.SUPPLIER_READ + "')";
+    public static final String SUPPLIERS_READ =
+            "hasAuthority('" + PermissionConstants.SUPPLIERS_READ + "')";
 
-    public static final String SUPPLIER_CREATE =
-            "hasAuthority('" + PermissionConstants.SUPPLIER_CREATE + "')";
+    public static final String SUPPLIERS_CREATE =
+            "hasAuthority('" + PermissionConstants.SUPPLIERS_CREATE + "')";
 
-    public static final String SUPPLIER_UPDATE =
-            "hasAuthority('" + PermissionConstants.SUPPLIER_UPDATE + "')";
+    public static final String SUPPLIERS_UPDATE =
+            "hasAuthority('" + PermissionConstants.SUPPLIERS_UPDATE + "')";
 
-    public static final String SUPPLIER_ACTIVATE =
-            "hasAuthority('" + PermissionConstants.SUPPLIER_ACTIVATE + "')";
+    public static final String SUPPLIERS_ACTIVATE =
+            "hasAuthority('" + PermissionConstants.SUPPLIERS_ACTIVATE + "')";
 
-    public static final String SUPPLIER_DEACTIVATE =
-            "hasAuthority('" + PermissionConstants.SUPPLIER_DEACTIVATE + "')";
+    public static final String SUPPLIERS_DEACTIVATE =
+            "hasAuthority('" + PermissionConstants.SUPPLIERS_DEACTIVATE + "')";
 
 
     // =========================================================
@@ -206,14 +206,14 @@ public final class SecurityExpressions {
     // COMPRAS
     // =========================================================
 
-    public static final String PURCHASE_READ =
-            "hasAuthority('" + PermissionConstants.PURCHASE_READ + "')";
+    public static final String PURCHASES_READ =
+            "hasAuthority('" + PermissionConstants.PURCHASES_READ + "')";
 
-    public static final String PURCHASE_CREATE =
-            "hasAuthority('" + PermissionConstants.PURCHASE_CREATE + "')";
+    public static final String PURCHASES_CREATE =
+            "hasAuthority('" + PermissionConstants.PURCHASES_CREATE + "')";
 
-    public static final String PURCHASE_CANCEL =
-            "hasAuthority('" + PermissionConstants.PURCHASE_CANCEL + "')";
+    public static final String PURCHASES_CANCEL =
+            "hasAuthority('" + PermissionConstants.PURCHASES_CANCEL + "')";
 
 
     // =========================================================

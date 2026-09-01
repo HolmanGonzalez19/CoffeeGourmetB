@@ -4,16 +4,16 @@ import com.cgb.coffeegourmetb.entity.CashRegister;
 import com.cgb.coffeegourmetb.entity.Sale;
 import com.cgb.coffeegourmetb.enums.SaleStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
-import com.cgb.coffeegourmetb.entity.CashRegister;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public interface SaleRepository extends JpaRepository<Sale, Long> {
+public interface SaleRepository extends JpaRepository<Sale, Long>, JpaSpecificationExecutor<Sale> {
 
     List<Sale> findAllByOrderByFechaHoraDesc();
 
@@ -171,13 +171,10 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
     );
 
     @Query("""
-    SELECT COUNT(s)
-    FROM Sale s
-    WHERE s.estado = com.cgb.coffeegourmetb.enums.SaleStatus.REGISTRADA
-    AND s.fechaHora BETWEEN :inicio AND :fin
-    """)
-    Long countVentasHoy(
-            @Param("inicio") LocalDateTime inicio,
-            @Param("fin") LocalDateTime fin
-    );
+    SELECT COALESCE(SUM(sd.cantidad), 0)
+    FROM SaleDetail sd
+    WHERE sd.venta.estado =
+        com.cgb.coffeegourmetb.enums.SaleStatus.REGISTRADA
+""")
+    Long totalProductosVendidos();
 }

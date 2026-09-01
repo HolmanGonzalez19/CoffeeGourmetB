@@ -14,6 +14,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import com.cgb.coffeegourmetb.dto.request.SaleFilterRequest;
+import com.cgb.coffeegourmetb.dto.response.PagedResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -206,6 +208,39 @@ public class SaleController {
                 request
         );
 
+    }
+
+    @Operation(
+            summary = "Buscar ventas con filtros y paginación"
+    )
+    @PreAuthorize(SALE_READ)
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Ventas consultadas correctamente"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Parámetros de consulta inválidos"
+            )
+    })
+    @GetMapping("/search")
+    public PagedResponse<SaleResponse> search(
+
+            @RequestParam(defaultValue = "0")
+            int page,
+
+            @RequestParam(defaultValue = "200")
+            int size,
+
+            @ModelAttribute
+            SaleFilterRequest filter) {
+
+        return saleService.search(
+                filter,
+                page,
+                size
+        );
     }
 
 }

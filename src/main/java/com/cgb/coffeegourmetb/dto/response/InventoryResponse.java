@@ -10,6 +10,8 @@ public class InventoryResponse {
 
     private String productoNombre;
 
+    private Integer stockMinimo;
+
     private Integer cantidadActual;
 
     private LocalDateTime fechaCreacion;
@@ -41,6 +43,14 @@ public class InventoryResponse {
 
     public void setProductoNombre(String productoNombre) {
         this.productoNombre = productoNombre;
+    }
+
+    public Integer getStockMinimo() {
+        return stockMinimo;
+    }
+
+    public void setStockMinimo(Integer stockMinimo) {
+        this.stockMinimo = stockMinimo;
     }
 
     public Integer getCantidadActual() {

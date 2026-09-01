@@ -114,40 +114,40 @@ public final class PermissionConstants {
     // PRODUCTOS
     // =========================================================
 
-    public static final String PRODUCT_READ =
-            "PRODUCT_READ";
+    public static final String PRODUCTS_READ =
+            "PRODUCTS_READ";
 
-    public static final String PRODUCT_CREATE =
-            "PRODUCT_CREATE";
+    public static final String PRODUCTS_CREATE =
+            "PRODUCTS_CREATE";
 
-    public static final String PRODUCT_UPDATE =
-            "PRODUCT_UPDATE";
+    public static final String PRODUCTS_UPDATE =
+            "PRODUCTS_UPDATE";
 
-    public static final String PRODUCT_ACTIVATE =
-            "PRODUCT_ACTIVATE";
+    public static final String PRODUCTS_ACTIVATE =
+            "PRODUCTS_ACTIVATE";
 
-    public static final String PRODUCT_DEACTIVATE =
-            "PRODUCT_DEACTIVATE";
+    public static final String PRODUCTS_DEACTIVATE =
+            "PRODUCTS_DEACTIVATE";
 
 
     // =========================================================
     // PROVEEDORES
     // =========================================================
 
-    public static final String SUPPLIER_READ =
-            "SUPPLIER_READ";
+    public static final String SUPPLIERS_READ =
+            "SUPPLIERS_READ";
 
-    public static final String SUPPLIER_CREATE =
-            "SUPPLIER_CREATE";
+    public static final String SUPPLIERS_CREATE =
+            "SUPPLIERS_CREATE";
 
-    public static final String SUPPLIER_UPDATE =
-            "SUPPLIER_UPDATE";
+    public static final String SUPPLIERS_UPDATE =
+            "SUPPLIERS_UPDATE";
 
-    public static final String SUPPLIER_ACTIVATE =
-            "SUPPLIER_ACTIVATE";
+    public static final String SUPPLIERS_ACTIVATE =
+            "SUPPLIERS_ACTIVATE";
 
-    public static final String SUPPLIER_DEACTIVATE =
-            "SUPPLIER_DEACTIVATE";
+    public static final String SUPPLIERS_DEACTIVATE =
+            "SUPPLIERS_DEACTIVATE";
 
 
     // =========================================================
@@ -204,15 +204,14 @@ public final class PermissionConstants {
     // COMPRAS
     // =========================================================
 
-    public static final String PURCHASE_READ =
-            "PURCHASE_READ";
+    public static final String PURCHASES_READ =
+            "PURCHASES_READ";
 
-    public static final String PURCHASE_CREATE =
-            "PURCHASE_CREATE";
+    public static final String PURCHASES_CREATE =
+            "PURCHASES_CREATE";
 
-    public static final String PURCHASE_CANCEL =
-            "PURCHASE_CANCEL";
-
+    public static final String PURCHASES_CANCEL =
+            "PURCHASES_CANCEL";
 
     // =========================================================
     // VENTAS

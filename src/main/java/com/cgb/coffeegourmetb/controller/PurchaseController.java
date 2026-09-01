@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.cgb.coffeegourmetb.security.SecurityExpressions.PURCHASE_READ;
-import static com.cgb.coffeegourmetb.security.SecurityExpressions.PURCHASE_CREATE;
-import static com.cgb.coffeegourmetb.security.SecurityExpressions.PURCHASE_CANCEL;
+import static com.cgb.coffeegourmetb.security.SecurityExpressions.PURCHASES_READ;
+import static com.cgb.coffeegourmetb.security.SecurityExpressions.PURCHASES_CREATE;
+import static com.cgb.coffeegourmetb.security.SecurityExpressions.PURCHASES_CANCEL;
 
 @RestController
 @RequestMapping(ApiPaths.PURCHASES)
@@ -38,7 +38,7 @@ public class PurchaseController {
     }
 
     @Operation(summary = "Listar todas las compras")
-    @PreAuthorize(PURCHASE_READ)
+    @PreAuthorize(PURCHASES_READ)
     @GetMapping
     public List<PurchaseResponse> findAll() {
 
@@ -47,7 +47,7 @@ public class PurchaseController {
     }
 
     @Operation(summary = "Consultar una compra por ID")
-    @PreAuthorize(PURCHASE_READ)
+    @PreAuthorize(PURCHASES_READ)
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Compra encontrada"),
             @ApiResponse(responseCode = "404", description = "Compra no encontrada")
@@ -60,22 +60,8 @@ public class PurchaseController {
 
     }
 
-    @Operation(summary = "Consultar una compra por número de recibo")
-    @PreAuthorize(PURCHASE_READ)
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Compra encontrada"),
-            @ApiResponse(responseCode = "404", description = "Compra no encontrada")
-    })
-    @GetMapping(ApiPaths.PURCHASES_BY_RECEIPT)
-    public PurchaseResponse findByReceipt(
-            @PathVariable String receipt) {
-
-        return purchaseService.findByReceipt(receipt);
-
-    }
-
     @Operation(summary = "Consultar compras de un proveedor")
-    @PreAuthorize(PURCHASE_READ)
+    @PreAuthorize(PURCHASES_READ)
     @GetMapping(ApiPaths.PURCHASES_BY_SUPPLIER)
     public List<PurchaseResponse> findBySupplier(
             @PathVariable Long supplierId) {
@@ -85,7 +71,7 @@ public class PurchaseController {
     }
 
     @Operation(summary = "Consultar compras registradas por un usuario")
-    @PreAuthorize(PURCHASE_READ)
+    @PreAuthorize(PURCHASES_READ)
     @GetMapping(ApiPaths.PURCHASES_BY_USER)
     public List<PurchaseResponse> findByUser(
             @PathVariable Long userId) {
@@ -95,7 +81,7 @@ public class PurchaseController {
     }
 
     @Operation(summary = "Consultar compras realizadas hoy")
-    @PreAuthorize(PURCHASE_READ)
+    @PreAuthorize(PURCHASES_READ)
     @GetMapping(ApiPaths.PURCHASES_TODAY)
     public List<PurchaseResponse> today() {
 
@@ -104,7 +90,7 @@ public class PurchaseController {
     }
 
     @Operation(summary = "Consultar compras del mes actual")
-    @PreAuthorize(PURCHASE_READ)
+    @PreAuthorize(PURCHASES_READ)
     @GetMapping(ApiPaths.PURCHASES_MONTH)
     public List<PurchaseResponse> month() {
 
@@ -113,7 +99,7 @@ public class PurchaseController {
     }
 
     @Operation(summary = "Consultar compras entre dos fechas")
-    @PreAuthorize(PURCHASE_READ)
+    @PreAuthorize(PURCHASES_READ)
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Consulta realizada correctamente")
     })
@@ -131,7 +117,7 @@ public class PurchaseController {
     }
 
     @Operation(summary = "Registrar una nueva compra")
-    @PreAuthorize(PURCHASE_CREATE)
+    @PreAuthorize(PURCHASES_CREATE)
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Compra registrada correctamente"),
             @ApiResponse(responseCode = "400", description = "Información inválida"),
@@ -147,7 +133,7 @@ public class PurchaseController {
     }
 
     @Operation(summary = "Anular una compra")
-    @PreAuthorize(PURCHASE_CANCEL)
+    @PreAuthorize(PURCHASES_CANCEL)
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Compra anulada correctamente"),
             @ApiResponse(responseCode = "400", description = "La compra no puede anularse"),

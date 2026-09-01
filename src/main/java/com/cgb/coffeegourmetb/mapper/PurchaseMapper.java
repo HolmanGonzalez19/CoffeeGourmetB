@@ -9,30 +9,47 @@ import org.springframework.stereotype.Component;
 @Component
 public class PurchaseMapper {
 
-    public PurchaseDetailResponse toResponse(PurchaseDetail detail){
+    public PurchaseDetailResponse toResponse(
+            PurchaseDetail detail) {
 
-        PurchaseDetailResponse response = new PurchaseDetailResponse();
+        PurchaseDetailResponse response =
+                new PurchaseDetailResponse();
 
         response.setId(detail.getId());
 
-        response.setProductoId(detail.getProducto().getId());
+        response.setProductoId(
+                detail.getProducto().getId());
 
-        response.setProductoNombre(detail.getProducto().getNombre());
+        response.setProductoNombre(
+                detail.getProducto().getNombre());
 
-        response.setCantidad(detail.getCantidad());
+        response.setCantidad(
+                detail.getCantidad());
 
-        response.setPrecioCompra(detail.getPrecioCompra());
+        response.setPrecioCompra(
+                detail.getPrecioCompra());
 
-        response.setSubtotal(detail.getSubtotal());
+        response.setSubtotal(
+                detail.getSubtotal());
 
         return response;
     }
 
-    public PurchaseResponse toResponse(Purchase purchase){
 
-        PurchaseResponse response = new PurchaseResponse();
+    public PurchaseResponse toResponse(
+            Purchase purchase) {
 
-        response.setId(purchase.getId());
+        PurchaseResponse response =
+                new PurchaseResponse();
+
+        response.setId(
+                purchase.getId());
+
+        /*
+         * Código interno generado por el sistema.
+         */
+        response.setCodigoCompra(
+                purchase.getCodigoCompra());
 
         response.setProveedorId(
                 purchase.getProveedor().getId());
@@ -46,9 +63,6 @@ public class PurchaseMapper {
         response.setUsuarioNombre(
                 purchase.getUsuario().getNombre());
 
-        response.setNumeroRecibo(
-                purchase.getNumeroRecibo());
-
         response.setFecha(
                 purchase.getFecha());
 
@@ -57,6 +71,30 @@ public class PurchaseMapper {
 
         response.setObservacion(
                 purchase.getObservacion());
+
+        /*
+         * Estado de la compra.
+         */
+        response.setEstado(
+                purchase.getEstado());
+
+        /*
+         * Información de anulación.
+         */
+        response.setFechaAnulacion(
+                purchase.getFechaAnulacion());
+
+        if (purchase.getUsuarioAnulacion() != null) {
+
+            response.setUsuarioAnulacionId(
+                    purchase.getUsuarioAnulacion().getId());
+
+            response.setUsuarioAnulacionNombre(
+                    purchase.getUsuarioAnulacion().getNombre());
+        }
+
+        response.setMotivoAnulacion(
+                purchase.getMotivoAnulacion());
 
         response.setFechaCreacion(
                 purchase.getFechaCreacion());

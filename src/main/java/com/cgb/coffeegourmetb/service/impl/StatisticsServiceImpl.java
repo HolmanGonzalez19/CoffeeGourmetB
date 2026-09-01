@@ -8,6 +8,7 @@ import com.cgb.coffeegourmetb.service.interfaces.StatisticsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,8 +42,8 @@ public class StatisticsServiceImpl
 
         response.setTotalProductosVendidos(
                 saleDetailRepository.totalProductosVendidos(
-                        java.time.LocalDate.MIN.atStartOfDay(),
-                        java.time.LocalDate.MAX.atStartOfDay()));
+                        LocalDateTime.of(2000, 1, 1, 0, 0),
+                        LocalDateTime.now()));
 
         List<ProductSaleResponse> productos =
                 new ArrayList<>();
@@ -54,7 +55,7 @@ public class StatisticsServiceImpl
                     new ProductSaleResponse();
 
             dto.setProductoId(
-                    (Long) fila[0]);
+                    ((Number) fila[0]).longValue());
 
             dto.setProducto(
                     (String) fila[1]);
@@ -65,10 +66,8 @@ public class StatisticsServiceImpl
             productos.add(dto);
         }
 
-        response.setProductosMasVendidos(
-                productos);
+        response.setProductosMasVendidos(productos);
 
         return response;
     }
-
 }

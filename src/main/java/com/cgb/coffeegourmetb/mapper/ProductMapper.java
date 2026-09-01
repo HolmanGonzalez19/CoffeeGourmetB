@@ -21,7 +21,6 @@ public class ProductMapper {
 
         Product product = new Product();
 
-        product.setCodigo(request.getCodigo());
         product.setCodigoBarras(request.getCodigoBarras());
         product.setNombre(request.getNombre());
         product.setCategoria(category);
@@ -41,7 +40,7 @@ public class ProductMapper {
      */
     public ProductResponse toResponse(Product product) {
 
-        return toResponse(product, null);
+        return toResponse(product, null, null);
     }
 
     /**
@@ -50,6 +49,7 @@ public class ProductMapper {
      */
     public ProductResponse toResponse(
             Product product,
+            BigDecimal precioCompra,
             BigDecimal precioVenta) {
 
         ProductResponse response = new ProductResponse();
@@ -73,6 +73,8 @@ public class ProductMapper {
         response.setStockMinimo(
                 product.getStockMinimo());
 
+        response.setPrecioCompra(precioCompra);
+
         response.setPrecioVenta(precioVenta);
 
         response.setActivo(product.getActivo());
@@ -94,7 +96,6 @@ public class ProductMapper {
             Product product,
             Category category) {
 
-        product.setCodigo(request.getCodigo());
         product.setCodigoBarras(request.getCodigoBarras());
         product.setNombre(request.getNombre());
         product.setCategoria(category);

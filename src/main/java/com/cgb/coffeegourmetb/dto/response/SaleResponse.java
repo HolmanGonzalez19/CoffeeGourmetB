@@ -18,6 +18,8 @@ public class SaleResponse {
 
     private String metodoPagoNombre;
 
+    private Long cajaId;
+
     private LocalDateTime fechaHora;
 
     private BigDecimal total;
@@ -169,5 +171,13 @@ public class SaleResponse {
 
     public void setDetalles(List<SaleDetailResponse> detalles) {
         this.detalles = detalles;
+    }
+
+    public Long getCajaId() {
+        return cajaId;
+    }
+
+    public void setCajaId(Long cajaId) {
+        this.cajaId = cajaId;
     }
 }
