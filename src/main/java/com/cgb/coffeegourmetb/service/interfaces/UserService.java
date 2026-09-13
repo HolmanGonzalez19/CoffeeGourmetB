@@ -11,6 +11,8 @@ public interface UserService {
 
     List<UserResponse> findAll();
 
+    List<UserResponse> findAllUsers();
+
     List<UserResponse> findAllInactive();
 
     UserResponse findById(Long id);

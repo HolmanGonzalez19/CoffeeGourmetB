@@ -17,9 +17,11 @@ public class CreateUserRequest {
     @Size(max = 50)
     private String usuario;
 
-    @NotBlank(message = "La contraseña es obligatoria.")
-    @Size(min = 8, max = 255)
+    //@NotBlank(message = "La contraseña es obligatoria.")
+    @Size(min = 8, max = 20)
     private String password;
+
+    private String pin;
 
     public CreateUserRequest() {
     }
@@ -55,4 +57,8 @@ public class CreateUserRequest {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public String getPin() { return pin; }
+
+    public void setPin(String pin) { this.pin = pin; }
 }

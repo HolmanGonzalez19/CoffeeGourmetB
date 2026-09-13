@@ -16,10 +16,10 @@ public class User extends BaseStatusEntity {
     @Column(name = "usuario", nullable = false, unique = true, length = 50)
     private String usuario;
 
-    @Column(name = "password_hash", nullable = false, length = 255)
+    @Column(name = "password_hash", nullable = true, length = 255)
     private String passwordHash;
 
-    @Column(name = "pin_hash", length = 255)
+    @Column(name = "pin_hash", nullable = true, length = 255)
     private String pinHash;
 
     public User() {

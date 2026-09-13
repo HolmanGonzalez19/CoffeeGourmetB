@@ -27,16 +27,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("""
         SELECT new com.cgb.coffeegourmetb.dto.response.OperatorResponse(
-            u.id,
-            u.nombre,
-            u.usuario
-        )
-        FROM User u
-        WHERE u.activo = true
-        AND u.role.nombre = :rolNombre
-        ORDER BY u.nombre ASC
+                u.id,
+                u.nombre,
+                u.usuario
+            )
+            FROM User u
+            WHERE u.activo = true
+            AND u.pinHash IS NOT NULL
+            AND u.pinHash <> ''
+            ORDER BY u.nombre ASC
     """)
-    List<OperatorResponse> findActiveOperators(
-            @Param("rolNombre") String rolNombre
-    );
+    List<OperatorResponse> findActiveOperators();
 }

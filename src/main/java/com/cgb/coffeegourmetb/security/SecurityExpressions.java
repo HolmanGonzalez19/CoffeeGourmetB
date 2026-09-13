@@ -19,40 +19,40 @@ public final class SecurityExpressions {
     // USUARIOS
     // =========================================================
 
-    public static final String USER_READ =
-            "hasAuthority('" + PermissionConstants.USER_READ + "')";
+    public static final String USERS_READ =
+            "hasAuthority('" + PermissionConstants.USERS_READ + "')";
 
-    public static final String USER_CREATE =
-            "hasAuthority('" + PermissionConstants.USER_CREATE + "')";
+    public static final String USERS_CREATE =
+            "hasAuthority('" + PermissionConstants.USERS_CREATE + "')";
 
-    public static final String USER_UPDATE =
-            "hasAuthority('" + PermissionConstants.USER_UPDATE + "')";
+    public static final String USERS_UPDATE =
+            "hasAuthority('" + PermissionConstants.USERS_UPDATE + "')";
 
-    public static final String USER_ACTIVATE =
-            "hasAuthority('" + PermissionConstants.USER_ACTIVATE + "')";
+    public static final String USERS_ACTIVATE =
+            "hasAuthority('" + PermissionConstants.USERS_ACTIVATE + "')";
 
-    public static final String USER_DEACTIVATE =
-            "hasAuthority('" + PermissionConstants.USER_DEACTIVATE + "')";
+    public static final String USERS_DEACTIVATE =
+            "hasAuthority('" + PermissionConstants.USERS_DEACTIVATE + "')";
 
 
     // =========================================================
     // ROLES
     // =========================================================
 
-    public static final String ROLE_READ =
-            "hasAuthority('" + PermissionConstants.ROLE_READ + "')";
+    public static final String ROLES_READ =
+            "hasAuthority('" + PermissionConstants.ROLES_READ + "')";
 
-    public static final String ROLE_CREATE =
-            "hasAuthority('" + PermissionConstants.ROLE_CREATE + "')";
+    public static final String ROLES_CREATE =
+            "hasAuthority('" + PermissionConstants.ROLES_CREATE + "')";
 
-    public static final String ROLE_UPDATE =
-            "hasAuthority('" + PermissionConstants.ROLE_UPDATE + "')";
+    public static final String ROLES_UPDATE =
+            "hasAuthority('" + PermissionConstants.ROLES_UPDATE + "')";
 
-    public static final String ROLE_ACTIVATE =
-            "hasAuthority('" + PermissionConstants.ROLE_ACTIVATE + "')";
+    public static final String ROLES_ACTIVATE =
+            "hasAuthority('" + PermissionConstants.ROLES_ACTIVATE + "')";
 
-    public static final String ROLE_DEACTIVATE =
-            "hasAuthority('" + PermissionConstants.ROLE_DEACTIVATE + "')";
+    public static final String ROLES_DEACTIVATE =
+            "hasAuthority('" + PermissionConstants.ROLES_DEACTIVATE + "')";
 
 
     // =========================================================
@@ -95,20 +95,20 @@ public final class SecurityExpressions {
     // CATEGORÍAS
     // =========================================================
 
-    public static final String CATEGORY_READ =
-            "hasAuthority('" + PermissionConstants.CATEGORY_READ + "')";
+    public static final String CATEGORIES_READ =
+            "hasAuthority('" + PermissionConstants.CATEGORIES_READ + "')";
 
-    public static final String CATEGORY_CREATE =
-            "hasAuthority('" + PermissionConstants.CATEGORY_CREATE + "')";
+    public static final String CATEGORIES_CREATE =
+            "hasAuthority('" + PermissionConstants.CATEGORIES_CREATE + "')";
 
-    public static final String CATEGORY_UPDATE =
-            "hasAuthority('" + PermissionConstants.CATEGORY_UPDATE + "')";
+    public static final String CATEGORIES_UPDATE =
+            "hasAuthority('" + PermissionConstants.CATEGORIES_UPDATE + "')";
 
-    public static final String CATEGORY_ACTIVATE =
-            "hasAuthority('" + PermissionConstants.CATEGORY_ACTIVATE + "')";
+    public static final String CATEGORIES_ACTIVATE =
+            "hasAuthority('" + PermissionConstants.CATEGORIES_ACTIVATE + "')";
 
-    public static final String CATEGORY_DEACTIVATE =
-            "hasAuthority('" + PermissionConstants.CATEGORY_DEACTIVATE + "')";
+    public static final String CATEGORIES_DEACTIVATE =
+            "hasAuthority('" + PermissionConstants.CATEGORIES_DEACTIVATE + "')";
 
 
     // =========================================================

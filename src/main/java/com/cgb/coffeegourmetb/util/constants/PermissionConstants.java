@@ -17,40 +17,40 @@ public final class PermissionConstants {
     // USUARIOS
     // =========================================================
 
-    public static final String USER_READ =
-            "USER_READ";
+    public static final String USERS_READ =
+            "USERS_READ";
 
-    public static final String USER_CREATE =
-            "USER_CREATE";
+    public static final String USERS_CREATE =
+            "USERS_CREATE";
 
-    public static final String USER_UPDATE =
-            "USER_UPDATE";
+    public static final String USERS_UPDATE =
+            "USERS_UPDATE";
 
-    public static final String USER_ACTIVATE =
-            "USER_ACTIVATE";
+    public static final String USERS_ACTIVATE =
+            "USERS_ACTIVATE";
 
-    public static final String USER_DEACTIVATE =
-            "USER_DEACTIVATE";
+    public static final String USERS_DEACTIVATE =
+            "USERS_DEACTIVATE";
 
 
     // =========================================================
     // ROLES
     // =========================================================
 
-    public static final String ROLE_READ =
-            "ROLE_READ";
+    public static final String ROLES_READ =
+            "ROLES_READ";
 
-    public static final String ROLE_CREATE =
-            "ROLE_CREATE";
+    public static final String ROLES_CREATE =
+            "ROLES_CREATE";
 
-    public static final String ROLE_UPDATE =
-            "ROLE_UPDATE";
+    public static final String ROLES_UPDATE =
+            "ROLES_UPDATE";
 
-    public static final String ROLE_ACTIVATE =
-            "ROLE_ACTIVATE";
+    public static final String ROLES_ACTIVATE =
+            "ROLES_ACTIVATE";
 
-    public static final String ROLE_DEACTIVATE =
-            "ROLE_DEACTIVATE";
+    public static final String ROLES_DEACTIVATE =
+            "ROLES_DEACTIVATE";
 
 
     // =========================================================
@@ -94,20 +94,20 @@ public final class PermissionConstants {
     // CATEGORÍAS
     // =========================================================
 
-    public static final String CATEGORY_READ =
-            "CATEGORY_READ";
+    public static final String CATEGORIES_READ =
+            "CATEGORIES_READ";
 
-    public static final String CATEGORY_CREATE =
-            "CATEGORY_CREATE";
+    public static final String CATEGORIES_CREATE =
+            "CATEGORIES_CREATE";
 
-    public static final String CATEGORY_UPDATE =
-            "CATEGORY_UPDATE";
+    public static final String CATEGORIES_UPDATE =
+            "CATEGORIES_UPDATE";
 
-    public static final String CATEGORY_ACTIVATE =
-            "CATEGORY_ACTIVATE";
+    public static final String CATEGORIES_ACTIVATE =
+            "CATEGORIES_ACTIVATE";
 
-    public static final String CATEGORY_DEACTIVATE =
-            "CATEGORY_DEACTIVATE";
+    public static final String CATEGORIES_DEACTIVATE =
+            "CATEGORIES_DEACTIVATE";
 
 
     // =========================================================

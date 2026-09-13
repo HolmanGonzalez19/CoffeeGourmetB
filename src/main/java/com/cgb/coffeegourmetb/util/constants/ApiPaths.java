@@ -40,6 +40,7 @@ public final class ApiPaths {
     public static final String PRODUCTS_INACTIVE = "/inactivos";
     public static final String PRODUCTS_ACTIVATE = "/{id}/activate";
     public static final String PRODUCTS_DEACTIVATE = "/{id}/deactivate";
+    public static final String PRODUCTS_TYPES = "/product-types";
 
     /* ==========================
      * Categorías

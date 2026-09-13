@@ -27,20 +27,20 @@ public class CreateProductRequest {
     @Size(max = 255)
     private String descripcion;
 
-    @NotNull(message = "El precio de compra es obligatorio.")
+    /*@NotNull(message = "El precio de compra es obligatorio.")
     @DecimalMin(
             value = "0.00",
             inclusive = true,
             message = "El precio de compra no puede ser negativo."
-    )
+    )*/
     private BigDecimal precioCompra;
 
-    @NotNull(message = "El precio de venta es obligatorio.")
+    /*@NotNull(message = "El precio de venta es obligatorio.")
     @DecimalMin(
             value = "0.01",
             inclusive = true,
             message = "El precio de venta debe ser mayor que cero."
-    )
+    )*/
     private BigDecimal precioVenta;
 
     public CreateProductRequest() {

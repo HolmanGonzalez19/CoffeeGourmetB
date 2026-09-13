@@ -28,6 +28,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     List<Product> findByActivoFalse();
 
+    Optional<Product> findByCodigoBarras(String codigoBarras);
+
     boolean existsByCodigoBarras(String codigoBarras);
 
     boolean existsByCodigoBarrasAndIdNot(

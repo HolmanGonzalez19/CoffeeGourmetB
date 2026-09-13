@@ -4,6 +4,8 @@ import com.cgb.coffeegourmetb.dto.request.CreateProductRequest;
 import com.cgb.coffeegourmetb.dto.request.UpdateProductRequest;
 import com.cgb.coffeegourmetb.dto.response.ProductResponse;
 import com.cgb.coffeegourmetb.dto.response.ProductPosResponse;
+import com.cgb.coffeegourmetb.dto.response.ProductTypeResponse;
+import com.cgb.coffeegourmetb.enums.ProductType;
 import com.cgb.coffeegourmetb.service.interfaces.ProductService;
 import com.cgb.coffeegourmetb.util.constants.ApiPaths;
 
@@ -19,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static com.cgb.coffeegourmetb.security.SecurityExpressions.PRODUCTS_READ;
@@ -104,6 +107,20 @@ public class ProductController {
         return service.findAllForPos();
     }
 
+    // ============================================================
+    // OBTENER PRODUCTOPOR CODIGO DE BARRAS
+    // ============================================================
+
+    @Operation(
+            summary = "Consultar producto por código de barras",
+            description = "Consulta un producto utilizando su código de barras."
+    )
+    @GetMapping("/barcode/{codigoBarras}")
+    public ProductResponse findByCodigoBarras(
+            @PathVariable String codigoBarras) {
+
+        return service.findByCodigoBarras(codigoBarras);
+    }
 
     // ============================================================
     // CONSULTAR PRODUCTO POR ID
@@ -221,5 +238,25 @@ public class ProductController {
 
         service.deactivate(id);
     }
+    @Operation(
+            summary = "Desactivar un producto"
+    )
+    @PreAuthorize(PRODUCTS_READ)
+    @GetMapping(ApiPaths.PRODUCTS_TYPES)
+    public List<ProductTypeResponse> getProductTypes() {
 
+        return Arrays.stream(ProductType.values())
+                .map(type -> new ProductTypeResponse(
+                        type.name(),
+                        obtenerNombre(type)
+                ))
+                .toList();
+    }
+
+    private String obtenerNombre(ProductType type) {
+        return switch (type) {
+            case FABRICADO -> "FABRICADO";
+            case COMPRADO -> "COMPRADO";
+        };
+    }
 }

@@ -18,11 +18,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 
-import static com.cgb.coffeegourmetb.security.SecurityExpressions.USER_READ;
-import static com.cgb.coffeegourmetb.security.SecurityExpressions.USER_CREATE;
-import static com.cgb.coffeegourmetb.security.SecurityExpressions.USER_UPDATE;
-import static com.cgb.coffeegourmetb.security.SecurityExpressions.USER_ACTIVATE;
-import static com.cgb.coffeegourmetb.security.SecurityExpressions.USER_DEACTIVATE;
+import static com.cgb.coffeegourmetb.security.SecurityExpressions.USERS_READ;
+import static com.cgb.coffeegourmetb.security.SecurityExpressions.USERS_CREATE;
+import static com.cgb.coffeegourmetb.security.SecurityExpressions.USERS_UPDATE;
+import static com.cgb.coffeegourmetb.security.SecurityExpressions.USERS_ACTIVATE;
+import static com.cgb.coffeegourmetb.security.SecurityExpressions.USERS_DEACTIVATE;
 
 @RestController
 @RequestMapping(ApiPaths.USERS)
@@ -37,10 +37,17 @@ public class UserController {
     }
 
     @Operation(summary = "Listar usuarios activos")
-    @PreAuthorize(USER_READ)
+    @PreAuthorize(USERS_READ)
     @GetMapping
     public List<UserResponse> findAll() {
         return service.findAll();
+    }
+
+    @Operation(summary = "Listar todos los usuarios")
+    @PreAuthorize(USERS_READ)
+    @GetMapping("/all")
+    public List<UserResponse> findAllUsers() {
+        return service.findAllUsers();
     }
 
     @Operation(summary = "Listar operadores activos")
@@ -50,21 +57,21 @@ public class UserController {
     }
 
     @Operation(summary = "Listar usuarios inactivos")
-    @PreAuthorize(USER_READ)
+    @PreAuthorize(USERS_READ)
     @GetMapping(ApiPaths.USERS_INACTIVE)
     public List<UserResponse> findAllInactive() {
         return service.findAllInactive();
     }
 
     @Operation(summary = "Consultar usuario por ID")
-    @PreAuthorize(USER_READ)
+    @PreAuthorize(USERS_READ)
     @GetMapping(ApiPaths.USERS_BY_ID)
     public UserResponse findById(@PathVariable Long id) {
         return service.findById(id);
     }
 
     @Operation(summary = "Crear usuario")
-    @PreAuthorize(USER_CREATE)
+    @PreAuthorize(USERS_CREATE)
     @ApiResponses({
             @ApiResponse(
                     responseCode = "201",
@@ -79,7 +86,7 @@ public class UserController {
     }
 
     @Operation(summary = "Actualizar usuario")
-    @PreAuthorize(USER_UPDATE)
+    @PreAuthorize(USERS_UPDATE)
     @PutMapping(ApiPaths.USERS_BY_ID)
     public UserResponse update(
             @PathVariable Long id,
@@ -89,7 +96,7 @@ public class UserController {
     }
 
     @Operation(summary = "Activar usuario")
-    @PreAuthorize(USER_ACTIVATE)
+    @PreAuthorize(USERS_ACTIVATE)
     @ApiResponses({
             @ApiResponse(
                     responseCode = "204",
@@ -107,7 +114,7 @@ public class UserController {
     }
 
     @Operation(summary = "Desactivar usuario")
-    @PreAuthorize(USER_DEACTIVATE)
+    @PreAuthorize(USERS_DEACTIVATE)
     @ApiResponses({
             @ApiResponse(
                     responseCode = "204",

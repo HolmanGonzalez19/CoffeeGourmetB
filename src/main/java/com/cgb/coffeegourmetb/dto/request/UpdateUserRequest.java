@@ -22,8 +22,10 @@ public class UpdateUserRequest {
      * Si viene informado se actualizará la contraseña.
      * Si viene null o vacío se conservará la actual.
      */
-    @Size(min = 8, max = 255, message = "La contraseña debe tener entre 8 y 255 caracteres.")
+    @Size(min = 8, max = 20, message = "La contraseña debe tener entre 8 y 20 caracteres.")
     private String password;
+
+    private String pin;
 
     @NotNull(message = "El estado es obligatorio.")
     private Boolean activo;
@@ -62,6 +64,10 @@ public class UpdateUserRequest {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public String getPin() { return pin; }
+
+    public void setPin(String pin) { this.pin = pin; }
 
     public Boolean getActivo() {
         return activo;

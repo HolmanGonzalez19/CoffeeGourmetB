@@ -83,8 +83,14 @@ public class InventoryTransactionServiceImpl
                 if (inventory.getCantidadActual() < cantidad) {
 
                     throw new BusinessException(
-                            "Stock insuficiente.");
-
+                            "No fue posible registrar la venta."
+                            +"\nExistencias insuficiente para el producto '"
+                                    + product.getNombre()
+                                    + "'.\n     Disponible: "
+                                    + inventory.getCantidadActual()
+                                    + ".\n      Solicitado: "
+                                    + cantidad
+                                    + ".");
                 }
 
                 inventory.setCantidadActual(

@@ -166,26 +166,32 @@ public class ProductServiceImpl implements ProductService {
         // ==========================================
         // CREAR PRECIO INICIAL
         // ==========================================
+        if (
+            request.getPrecioCompra() != null
+            && request.getPrecioCompra().compareTo(BigDecimal.ZERO) > 0
+            && request.getPrecioVenta() != null
+            && request.getPrecioVenta().compareTo(BigDecimal.ZERO) > 0
+        ) {
+            PriceHistory priceHistory =
+                    new PriceHistory();
 
-        PriceHistory priceHistory =
-                new PriceHistory();
+            priceHistory.setProducto(savedProduct);
 
-        priceHistory.setProducto(savedProduct);
+            priceHistory.setPrecioCompra(
+                    request.getPrecioCompra());
 
-        priceHistory.setPrecioCompra(
-                request.getPrecioCompra());
+            priceHistory.setPrecioVenta(
+                    request.getPrecioVenta());
 
-        priceHistory.setPrecioVenta(
-                request.getPrecioVenta());
+            priceHistory.setFechaInicio(
+                    LocalDateTime.now());
 
-        priceHistory.setFechaInicio(
-                LocalDateTime.now());
+            priceHistory.setFechaFin(null);
 
-        priceHistory.setFechaFin(null);
+            priceHistory.setActivo(true);
 
-        priceHistory.setActivo(true);
-
-        priceHistoryRepository.save(priceHistory);
+            priceHistoryRepository.save(priceHistory);
+        }
 
         // ==========================================
         // RESPUESTA
@@ -337,6 +343,48 @@ public class ProductServiceImpl implements ProductService {
                 .toList();
     }
 
+    @Override
+    @Transactional
+    public ProductResponse findByCodigoBarras(String codigoBarras) {
+
+        if (codigoBarras == null || codigoBarras.trim().isEmpty()) {
+            throw new BusinessException(
+                    "El código de barras es obligatorio.");
+        }
+
+        String codigoBarrasNormalizado =
+                codigoBarras.trim();
+
+        Product product =
+                productRepository
+                        .findByCodigoBarras(
+                                codigoBarrasNormalizado)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "No existe un producto con el código de barras: "
+                                                + codigoBarrasNormalizado));
+
+        BigDecimal precioCompra = null;
+        BigDecimal precioVenta = null;
+
+        var precioActual =
+                priceHistoryRepository
+                        .findByProductoIdAndActivoTrue(
+                                product.getId());
+
+        if (precioActual.isPresent()) {
+            precioCompra =
+                    precioActual.get().getPrecioCompra();
+
+            precioVenta =
+                    precioActual.get().getPrecioVenta();
+        }
+
+        return productMapper.toResponse(
+                product,
+                precioCompra,
+                precioVenta);
+    }
     // ==========================
     // Métodos privados
     // ==========================

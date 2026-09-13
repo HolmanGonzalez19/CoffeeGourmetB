@@ -25,6 +25,11 @@ public interface ProductService {
     ProductResponse findById(Long id);
 
     /**
+     * Obtiene un producto por codigo de barras.
+     */
+    ProductResponse findByCodigoBarras(String codigoBarras);
+
+    /**
      * Obtiene el catálogo de productos activos con su precio de venta vigente.
      */
     List<ProductPosResponse> findAllForPos();

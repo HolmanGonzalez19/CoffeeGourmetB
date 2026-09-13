@@ -27,8 +27,8 @@ public class UpdateProductRequest {
     @Size(max = 255)
     private String descripcion;
 
-    @NotNull(message = "El estado es obligatorio.")
-    private Boolean activo;
+   /* @NotNull(message = "El estado es obligatorio.")
+    private Boolean activo;*/
 
     @NotNull(message = "El precio de compra es obligatorio.")
     @DecimalMin(value = "0.0", inclusive = false)
@@ -89,13 +89,13 @@ public class UpdateProductRequest {
         this.descripcion = descripcion;
     }
 
-    public Boolean getActivo() {
+    /*public Boolean getActivo() {
         return activo;
     }
 
     public void setActivo(Boolean activo) {
         this.activo = activo;
-    }
+    }*/
 
     public BigDecimal getPrecioCompra() {
         return precioCompra;

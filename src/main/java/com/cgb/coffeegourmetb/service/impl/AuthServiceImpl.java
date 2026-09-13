@@ -40,16 +40,35 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public AuthenticationResponse login(
             LoginRequest request) {
-        /*System.out.println("valor dde 4561");
-        System.out.println(
-                credentialService.encode("4561")
-        );*/
+
         User user = userRepository
                 .findByUsuarioAndActivoTrue(
                         request.getUsuario())
                 .orElseThrow(() ->
                         new BusinessException(
                                 "Usuario o contraseña incorrectos."));
+
+        /*
+         * El login con usuario y contraseña corresponde
+         * al acceso administrativo.
+         *
+         * Un operador puede tener contraseña configurada,
+         * pero no puede utilizarla para ingresar al módulo
+         * administrativo.
+         */
+        if (!"ADMINISTRADOR".equals(
+                user.getRole().getNombre())) {
+
+            throw new BusinessException(
+                    "El usuario no tiene acceso a la administración.");
+        }
+
+        if (user.getPasswordHash() == null ||
+                user.getPasswordHash().isBlank()) {
+
+            throw new BusinessException(
+                    "El usuario no tiene una contraseña configurada.");
+        }
 
         if (!credentialService.matches(
                 request.getPassword(),

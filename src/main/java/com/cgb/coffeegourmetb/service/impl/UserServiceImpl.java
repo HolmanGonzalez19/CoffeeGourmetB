@@ -11,6 +11,7 @@ import com.cgb.coffeegourmetb.exception.ResourceNotFoundException;
 import com.cgb.coffeegourmetb.mapper.UserMapper;
 import com.cgb.coffeegourmetb.repository.RoleRepository;
 import com.cgb.coffeegourmetb.repository.UserRepository;
+import com.cgb.coffeegourmetb.service.interfaces.CredentialService;
 import com.cgb.coffeegourmetb.service.interfaces.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -24,21 +25,33 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final UserMapper userMapper;
+    private final CredentialService credentialService;
 
     public UserServiceImpl(
             UserRepository userRepository,
             RoleRepository roleRepository,
-            UserMapper userMapper) {
+            UserMapper userMapper,
+            CredentialService credentialService) {
 
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.userMapper = userMapper;
+        this.credentialService = credentialService;
     }
 
     @Override
     public List<UserResponse> findAll() {
 
         return userRepository.findByActivoTrue()
+                .stream()
+                .map(userMapper::toResponse)
+                .toList();
+    }
+
+    @Override
+    public List<UserResponse> findAllUsers() {
+
+        return userRepository.findAll()
                 .stream()
                 .map(userMapper::toResponse)
                 .toList();
@@ -67,23 +80,28 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<OperatorResponse> findOperators() {
 
-        return userRepository.findActiveOperators("OPERADOR");
+        return userRepository.findActiveOperators();
     }
 
     @Override
     public UserResponse create(CreateUserRequest request) {
-
         validateUsername(request.getUsuario());
-
         Role role = findRole(request.getRolId());
+        validarCredenciales( request.getPassword(), request.getPin());
 
         User user = userMapper.toEntity(request);
-
         user.setRole(role);
-        user.setPasswordHash(request.getPassword());
-
-        return userMapper.toResponse(
-                userRepository.save(user));
+        if (request.getPassword() != null && !request.getPassword().isBlank()) {
+            user.setPasswordHash( credentialService.encode( request.getPassword()));
+        } else {
+            user.setPasswordHash(null);
+        }
+        if (request.getPin() != null && !request.getPin().isBlank()) {
+            user.setPinHash( credentialService.encode( request.getPin()));
+        } else {
+            user.setPinHash(null);
+        }
+        return userMapper.toResponse( userRepository.save(user));
     }
 
     @Override
@@ -109,7 +127,16 @@ public class UserServiceImpl implements UserService {
                 !request.getPassword().isBlank()) {
 
             user.setPasswordHash(
-                    request.getPassword());
+                    credentialService.encode(
+                            request.getPassword()));
+        }
+
+        if (request.getPin() != null &&
+                !request.getPin().isBlank()) {
+
+            user.setPinHash(
+                    credentialService.encode(
+                            request.getPin()));
         }
 
         return userMapper.toResponse(
@@ -171,6 +198,55 @@ public class UserServiceImpl implements UserService {
 
             throw new BusinessException(
                     "Ya existe otro usuario con ese nombre.");
+        }
+    }
+
+    private void validarCredenciales(
+            String password,
+            String pin) {
+
+        boolean tienePassword =
+                password != null &&
+                        !password.isBlank();
+
+        boolean tienePin =
+                pin != null &&
+                        !pin.isBlank();
+
+        if (!tienePassword && !tienePin) {
+            throw new BusinessException(
+                    "El usuario debe tener una contraseña o un PIN."
+            );
+        }
+
+        if (tienePassword) {
+
+            if (password.length() < 8 ||
+                    password.length() > 20) {
+
+                throw new BusinessException(
+                        "La contraseña debe tener entre 8 y 20 caracteres."
+                );
+            }
+        }
+
+        if (tienePin) {
+            validarPin(pin);
+        }
+    }
+
+    private void validarPin(String pin) {
+
+        if (pin == null || !pin.matches("\\d{4}")) {
+            throw new BusinessException(
+                    "El PIN debe tener exactamente 4 dígitos numéricos."
+            );
+        }
+
+        if (pin.matches(".*(\\d)\\1\\1.*")) {
+            throw new BusinessException(
+                    "El PIN no puede contener 3 o más números iguales consecutivos."
+            );
         }
     }
 }

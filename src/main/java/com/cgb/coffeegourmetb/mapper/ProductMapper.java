@@ -102,6 +102,6 @@ public class ProductMapper {
         product.setDescripcion(request.getDescripcion());
         product.setTipoProducto(request.getTipoProducto());
         product.setStockMinimo(request.getStockMinimo());
-        product.setActivo(request.getActivo());
+        //product.setActivo(request.getActivo());
     }
 }

@@ -17,11 +17,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.cgb.coffeegourmetb.security.SecurityExpressions.CATEGORY_READ;
-import static com.cgb.coffeegourmetb.security.SecurityExpressions.CATEGORY_CREATE;
-import static com.cgb.coffeegourmetb.security.SecurityExpressions.CATEGORY_UPDATE;
-import static com.cgb.coffeegourmetb.security.SecurityExpressions.CATEGORY_ACTIVATE;
-import static com.cgb.coffeegourmetb.security.SecurityExpressions.CATEGORY_DEACTIVATE;
+import static com.cgb.coffeegourmetb.security.SecurityExpressions.CATEGORIES_READ;
+import static com.cgb.coffeegourmetb.security.SecurityExpressions.CATEGORIES_CREATE;
+import static com.cgb.coffeegourmetb.security.SecurityExpressions.CATEGORIES_UPDATE;
+import static com.cgb.coffeegourmetb.security.SecurityExpressions.CATEGORIES_ACTIVATE;
+import static com.cgb.coffeegourmetb.security.SecurityExpressions.CATEGORIES_DEACTIVATE;
 
 @RestController
 @RequestMapping(ApiPaths.CATEGORIES)
@@ -36,28 +36,28 @@ public class CategoryController {
     }
 
     @Operation(summary = "Listar categorías activas")
-    @PreAuthorize(CATEGORY_READ)
+    @PreAuthorize(CATEGORIES_READ)
     @GetMapping
     public List<CategoryResponse> findAll() {
         return service.findAll();
     }
 
     @Operation(summary = "Listar categorías inactivas")
-    @PreAuthorize(CATEGORY_READ)
+    @PreAuthorize(CATEGORIES_READ)
     @GetMapping(ApiPaths.CATEGORIES_INACTIVE)
     public List<CategoryResponse> findAllInactive() {
         return service.findAllInactive();
     }
 
     @Operation(summary = "Consultar una categoría por ID")
-    @PreAuthorize(CATEGORY_READ)
+    @PreAuthorize(CATEGORIES_READ)
     @GetMapping(ApiPaths.CATEGORIES_BY_ID)
     public CategoryResponse findById(@PathVariable Long id) {
         return service.findById(id);
     }
 
     @Operation(summary = "Crear una categoría")
-    @PreAuthorize(CATEGORY_CREATE)
+    @PreAuthorize(CATEGORIES_CREATE)
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Categoría creada correctamente")
     })
@@ -68,7 +68,7 @@ public class CategoryController {
     }
 
     @Operation(summary = "Actualizar una categoría")
-    @PreAuthorize(CATEGORY_UPDATE)
+    @PreAuthorize(CATEGORIES_UPDATE)
     @PutMapping(ApiPaths.CATEGORIES_BY_ID)
     public CategoryResponse update(@PathVariable Long id,
                                    @Valid @RequestBody UpdateCategoryRequest request) {
@@ -76,7 +76,7 @@ public class CategoryController {
     }
 
     @Operation(summary = "Activar una categoría")
-    @PreAuthorize(CATEGORY_ACTIVATE)
+    @PreAuthorize(CATEGORIES_ACTIVATE)
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Categoría activada correctamente"),
             @ApiResponse(responseCode = "404", description = "Categoría no encontrada")
@@ -88,7 +88,7 @@ public class CategoryController {
     }
 
     @Operation(summary = "Desactivar una categoría")
-    @PreAuthorize(CATEGORY_DEACTIVATE)
+    @PreAuthorize(CATEGORIES_DEACTIVATE)
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Categoría desactivada correctamente"),
             @ApiResponse(responseCode = "404", description = "Categoría no encontrada")

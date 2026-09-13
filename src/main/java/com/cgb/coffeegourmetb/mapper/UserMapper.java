@@ -10,17 +10,12 @@ import org.springframework.stereotype.Component;
 public class UserMapper {
 
     public User toEntity(CreateUserRequest request) {
-
         User user = new User();
-
         user.setNombre(request.getNombre());
         user.setUsuario(request.getUsuario());
-
-        // Más adelante aquí se almacenará el hash BCrypt
-        user.setPasswordHash(request.getPassword());
-
+        /*user.setPasswordHash(request.getPassword());
+        user.setPinHash(request.getPin());*/
         user.setActivo(true);
-
         return user;
     }
 
@@ -29,13 +24,12 @@ public class UserMapper {
 
         user.setNombre(request.getNombre());
         user.setUsuario(request.getUsuario());
-
-        if (request.getPassword() != null &&
-                !request.getPassword().isBlank()) {
-
+        /*if (request.getPassword() != null && !request.getPassword().isBlank()) {
             user.setPasswordHash(request.getPassword());
         }
-
+        if (request.getPin() != null && !request.getPin().isBlank()) {
+            user.setPinHash(request.getPin());
+        }*/
         user.setActivo(request.getActivo());
     }
 

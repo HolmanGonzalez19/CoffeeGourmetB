@@ -17,11 +17,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 
-import static com.cgb.coffeegourmetb.security.SecurityExpressions.ROLE_READ;
-import static com.cgb.coffeegourmetb.security.SecurityExpressions.ROLE_CREATE;
-import static com.cgb.coffeegourmetb.security.SecurityExpressions.ROLE_UPDATE;
-import static com.cgb.coffeegourmetb.security.SecurityExpressions.ROLE_ACTIVATE;
-import static com.cgb.coffeegourmetb.security.SecurityExpressions.ROLE_DEACTIVATE;
+import static com.cgb.coffeegourmetb.security.SecurityExpressions.ROLES_READ;
+import static com.cgb.coffeegourmetb.security.SecurityExpressions.ROLES_CREATE;
+import static com.cgb.coffeegourmetb.security.SecurityExpressions.ROLES_UPDATE;
+import static com.cgb.coffeegourmetb.security.SecurityExpressions.ROLES_ACTIVATE;
+import static com.cgb.coffeegourmetb.security.SecurityExpressions.ROLES_DEACTIVATE;
 
 /**
  * Controlador encargado de la gestión de roles.
@@ -44,7 +44,7 @@ public class RoleController {
      * @return Lista de roles activos.
      */
     @Operation(summary = "Listar roles activos")
-    @PreAuthorize(ROLE_READ)
+    @PreAuthorize(ROLES_READ)
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Listado obtenido correctamente")
     })
@@ -59,7 +59,7 @@ public class RoleController {
      * @return Lista de roles inactivos.
      */
     @Operation(summary = "Listar roles inactivos")
-    @PreAuthorize(ROLE_READ)
+    @PreAuthorize(ROLES_READ)
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Listado obtenido correctamente")
     })
@@ -75,7 +75,7 @@ public class RoleController {
      * @return Rol encontrado.
      */
     @Operation(summary = "Consultar un rol por ID")
-    @PreAuthorize(ROLE_READ)
+    @PreAuthorize(ROLES_READ)
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Rol encontrado"),
             @ApiResponse(responseCode = "404", description = "Rol no encontrado")
@@ -92,7 +92,7 @@ public class RoleController {
      * @return Rol creado.
      */
     @Operation(summary = "Crear un nuevo rol")
-    @PreAuthorize(ROLE_CREATE)
+    @PreAuthorize(ROLES_CREATE)
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Rol creado correctamente"),
             @ApiResponse(responseCode = "400", description = "Datos inválidos")
@@ -111,7 +111,7 @@ public class RoleController {
      * @return Rol actualizado.
      */
     @Operation(summary = "Actualizar un rol")
-    @PreAuthorize(ROLE_UPDATE)
+    @PreAuthorize(ROLES_UPDATE)
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Rol actualizado correctamente"),
             @ApiResponse(responseCode = "400", description = "Datos inválidos"),
@@ -130,7 +130,7 @@ public class RoleController {
      * @param id Identificador del rol.
      */
     @Operation(summary = "Activar un rol")
-    @PreAuthorize(ROLE_ACTIVATE)
+    @PreAuthorize(ROLES_ACTIVATE)
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Rol activado correctamente"),
             @ApiResponse(responseCode = "404", description = "Rol no encontrado")
@@ -147,7 +147,7 @@ public class RoleController {
      * @param id Identificador del rol.
      */
     @Operation(summary = "Desactivar un rol")
-    @PreAuthorize(ROLE_DEACTIVATE)
+    @PreAuthorize(ROLES_DEACTIVATE)
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Rol desactivado correctamente"),
             @ApiResponse(responseCode = "404", description = "Rol no encontrado")
