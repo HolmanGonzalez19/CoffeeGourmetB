@@ -21,6 +21,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.cgb.coffeegourmetb.service.interfaces.DatabaseBackupService;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -37,19 +40,22 @@ public class CashRegisterServiceImpl
     private final CashRegisterMapper mapper;
     private final SaleRepository saleRepository;
     private final CashMovementRepository cashMovementRepository;
+    private final DatabaseBackupService databaseBackupService;
 
     public CashRegisterServiceImpl(
             CashRegisterRepository repository,
             UserRepository userRepository,
             CashRegisterMapper mapper,
             SaleRepository saleRepository,
-            CashMovementRepository cashMovementRepository) {
+            CashMovementRepository cashMovementRepository,
+            DatabaseBackupService databaseBackupService) {
 
         this.repository = repository;
         this.userRepository = userRepository;
         this.mapper = mapper;
         this.saleRepository = saleRepository;
         this.cashMovementRepository = cashMovementRepository;
+        this.databaseBackupService = databaseBackupService;
     }
 
     @Override
@@ -136,6 +142,7 @@ public class CashRegisterServiceImpl
         caja.setDiferencia(diferencia);
 
         repository.save(caja);
+        registrarBackupDespuesDelCommit();
 
         return construirRespuesta(caja);
     }
@@ -313,5 +320,45 @@ public class CashRegisterServiceImpl
 
 
         return response;
+    }
+
+    /**
+     * Programa la generación del respaldo para ejecutarse
+     * después de que la transacción de cierre de caja haya
+     * realizado correctamente el commit.
+     */
+    private void registrarBackupDespuesDelCommit() {
+
+        if (!TransactionSynchronizationManager.isSynchronizationActive()) {
+
+            throw new BusinessException(
+                    "No fue posible registrar la generación "
+                            + "del respaldo de la base de datos.");
+        }
+
+        TransactionSynchronizationManager.registerSynchronization(
+                new TransactionSynchronization() {
+
+                    @Override
+                    public void afterCommit() {
+
+                        try {
+
+                            String backupFile =
+                                    databaseBackupService.createBackup();
+
+                            System.out.println(
+                                    "Backup de CoffeeGourmet generado correctamente: "
+                                            + backupFile);
+
+                        } catch (Exception e) {
+
+                            System.err.println(
+                                    "ADVERTENCIA: la caja fue cerrada correctamente, "
+                                            + "pero no fue posible generar el backup. "
+                                            + e.getMessage());
+                        }
+                    }
+                });
     }
 }

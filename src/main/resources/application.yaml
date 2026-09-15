@@ -26,3 +26,9 @@ security:
 
      expiration: 3600000
      # Ajuste Priduccion: la expiracion debe ir en un variable de entorno, verificar como es mejor utilizar
+
+backup:
+  directory: C:/Repositorio/backups
+
+  postgresql:
+    pg-dump-path: C:/Program Files/PostgreSQL/17/bin/pg_dump.exe

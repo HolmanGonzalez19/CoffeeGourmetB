@@ -168,4 +168,10 @@ public final class ApiPaths {
 
     public static final String STATISTICS = API + "/statistics";
 
+    /* ==========================
+     * RECIBOS
+     * ========================== */
+
+    public static final String RECEIPTS = API + "/receipt";
+    public static final String RECEIPTS_PRINT = "/{id}";
 }

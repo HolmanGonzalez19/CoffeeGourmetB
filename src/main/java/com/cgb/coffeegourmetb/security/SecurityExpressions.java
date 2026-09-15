@@ -267,4 +267,11 @@ public final class SecurityExpressions {
     public static final String STATISTICS_READ =
             "hasAuthority('STATISTICS_READ')";
 
+    /* ==========================
+     * recibo
+     * ========================== */
+
+    public static final String RECEIPT_PRINT =
+            "hasAuthority('" + PermissionConstants.CASH_REGISTER_OPERATION + "')";
+
 }
