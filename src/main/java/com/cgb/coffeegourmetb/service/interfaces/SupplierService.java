@@ -10,6 +10,8 @@ public interface SupplierService {
 
     List<SupplierResponse> findAll();
 
+    List<SupplierResponse> findAllSuppliers();
+
     List<SupplierResponse> findAllInactive();
 
     SupplierResponse findById(Long id);

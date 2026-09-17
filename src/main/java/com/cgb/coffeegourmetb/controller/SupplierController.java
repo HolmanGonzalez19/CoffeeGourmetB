@@ -42,6 +42,13 @@ public class SupplierController {
         return service.findAll();
     }
 
+    @Operation(summary = "Listar todos los proveedores")
+    @PreAuthorize(SUPPLIERS_READ)
+    @GetMapping("/all")
+    public List<SupplierResponse> findAllSuppliers() {
+        return service.findAllSuppliers();
+    }
+
     @Operation(summary = "Listar proveedores inactivos")
     @PreAuthorize(SUPPLIERS_READ)
     @GetMapping(ApiPaths.SUPPLIERS_INACTIVE)

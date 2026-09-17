@@ -40,6 +40,15 @@ public class SupplierServiceImpl implements SupplierService {
 
     @Override
     @Transactional(readOnly = true)
+    public List<SupplierResponse> findAllSuppliers() {
+        return repository.findAll()
+                .stream()
+                .map(mapper::toResponse)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<SupplierResponse> findAllInactive() {
 
         return repository.findByActivoFalse()

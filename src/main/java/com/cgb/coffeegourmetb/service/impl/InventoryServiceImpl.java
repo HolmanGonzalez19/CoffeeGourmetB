@@ -192,7 +192,7 @@ public class InventoryServiceImpl implements InventoryService {
     public List<InventoryReferenceResponse> references() {
 
         LocalDateTime fechaDesde =
-                LocalDateTime.now().minusDays(3);
+                LocalDateTime.now().minusDays(5);
 
         return purchaseRepository
                 .findRecentRegisteredPurchases(fechaDesde)
@@ -202,7 +202,7 @@ public class InventoryServiceImpl implements InventoryService {
                                 "COMPRA",
                                 purchase.getId(),
                                 "COMPRA-" + purchase.getId(),
-                                "Compra - "
+                                purchase.getCodigoCompra() +" - "
                                         + purchase.getProveedor().getNombre()
                         )
                 )
