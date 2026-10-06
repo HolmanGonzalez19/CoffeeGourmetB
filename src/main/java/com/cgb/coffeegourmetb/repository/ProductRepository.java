@@ -83,7 +83,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                 c.id,
                 c.nombre,
                 p.tipoProducto,
-                ph.precioVenta
+                ph.precioVenta,
+                p.imagen
             )
             FROM Product p
             JOIN p.categoria c

@@ -18,6 +18,8 @@ public class ProductPosResponse {
 
     private BigDecimal precioVenta;
 
+    private String imagen;
+
     public ProductPosResponse() {
     }
 
@@ -29,7 +31,8 @@ public class ProductPosResponse {
             Long categoriaId,
             String categoriaNombre,
             ProductType tipoProducto,
-            BigDecimal precioVenta) {
+            BigDecimal precioVenta,
+            String imagen) {
 
         this.id = id;
         this.codigo = codigo;
@@ -39,6 +42,7 @@ public class ProductPosResponse {
         this.categoriaNombre = categoriaNombre;
         this.tipoProducto = tipoProducto;
         this.precioVenta = precioVenta;
+        this.imagen =  imagen;
     }
 
     public Long getId() {
@@ -104,4 +108,8 @@ public class ProductPosResponse {
     public void setPrecioVenta(BigDecimal precioVenta) {
         this.precioVenta = precioVenta;
     }
+
+    public String getImagen() { return imagen; }
+
+    public void setImagen(String imagen) { this.imagen = imagen;    }
 }

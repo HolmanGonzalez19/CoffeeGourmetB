@@ -46,11 +46,33 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
 
+                        //Produccion
                         .requestMatchers(
+                                "/",
+                                "/index.html",
+                                "/favicon.ico",
+                                "/assets/**",
+                                "/*.js",
+                                "/*.css",
+                                "/*.map",
+                                "/*.ico",
+                                "/dashboard",
+                                "/cash-register",
+                                "/pos",
+                                "/productos",
+                                "/inventario",
+                                "/compras",
+                                "/ventas",
+                                "/estadisticas",
+                                "/error"
+                        ).permitAll()
+
+                        //Desarrollo
+                        /*.requestMatchers(
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/v3/api-docs/**"
-                        ).permitAll()
+                        ).permitAll()*/
 
                         .requestMatchers(
                                 "/api/auth/**"
@@ -69,6 +91,10 @@ public class SecurityConfig {
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/api/products/barcode/*"
+                        ).permitAll()
+
+                        .requestMatchers(
+                                "/api/products/images/**"
                         ).permitAll()
 
                         .requestMatchers(

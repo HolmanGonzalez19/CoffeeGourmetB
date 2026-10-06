@@ -4,31 +4,48 @@ spring:
 
   datasource:
     url: jdbc:postgresql://localhost:5432/CoffeeGourmet?currentSchema=coffeegourmet
-    username: postgres # Ajuste Priduccion: Se debe cambiar a una variable de entorno
+    username: postgres
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
+
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
 
   jpa:
     hibernate:
       ddl-auto: validate
-    show-sql: true # Ajuste Priduccion: para produccion fasle, para pruebas true
+    show-sql: false
+    #false #Produccion
+    #true #Desarrollo
+
     properties:
       hibernate:
-        format_sql: true # Ajuste Priduccion: para produccion fasle, para pruebas true
+        format_sql: false
+        #false #Produccion
+        #true #Desarrollo
+
         default_schema: coffeegourmet
+
 server:
   port: 8080
 
 security:
-   jwt:
-     secret: CoffeeGourmetSecretKey2026VerySecureForJwtAuthenticationSystem
-     # Ajuste Priduccion: secret debe ir en un variable de entorno
-
-     expiration: 3600000
-     # Ajuste Priduccion: la expiracion debe ir en un variable de entorno, verificar como es mejor utilizar
+  jwt:
+    secret: ${JWT_SECRET}
+    #${JWT_SECRET} #Produccion
+    #CoffeeGourmetSecretKey2026VerySecureForJwtAuthenticationSystem #Desarrollo
+    expiration: 3600000
 
 backup:
-  directory: C:/Repositorio/backups
+  directory: C:/CoffeeGourmet-POS/backups
+  #C:/CoffeeGourmet-POS/backups #Produccion
+  #C:/Repositorio/backups #Desarrollo
 
   postgresql:
     pg-dump-path: C:/Program Files/PostgreSQL/17/bin/pg_dump.exe
+
+coffee-gourmet:
+  images:
+    products-directory: C:/CoffeeGourmet-POS/imagenes/productos

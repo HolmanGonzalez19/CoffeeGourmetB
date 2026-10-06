@@ -4,6 +4,7 @@ import com.cgb.coffeegourmetb.dto.request.CreateProductRequest;
 import com.cgb.coffeegourmetb.dto.request.UpdateProductRequest;
 import com.cgb.coffeegourmetb.dto.response.ProductResponse;
 import com.cgb.coffeegourmetb.dto.response.ProductPosResponse;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -43,6 +44,11 @@ public interface ProductService {
      * Actualiza un producto.
      */
     ProductResponse update(Long id, UpdateProductRequest request);
+
+    /**
+     * Inserta o reemplaza la imagen de un producto.
+     */
+    ProductResponse saveImage(Long id, MultipartFile file);
 
     /**
      * Activa un producto.

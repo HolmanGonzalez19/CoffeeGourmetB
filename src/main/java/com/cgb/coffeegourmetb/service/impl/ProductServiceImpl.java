@@ -13,11 +13,13 @@ import com.cgb.coffeegourmetb.mapper.ProductMapper;
 import com.cgb.coffeegourmetb.repository.CategoryRepository;
 import com.cgb.coffeegourmetb.repository.InventoryRepository;
 import com.cgb.coffeegourmetb.repository.ProductRepository;
+import com.cgb.coffeegourmetb.service.interfaces.ProductImageService;
 import com.cgb.coffeegourmetb.service.interfaces.ProductService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import com.cgb.coffeegourmetb.entity.PriceHistory;
 import com.cgb.coffeegourmetb.repository.PriceHistoryRepository;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 
@@ -33,19 +35,22 @@ public class ProductServiceImpl implements ProductService {
     private final InventoryRepository inventoryRepository;
     private final ProductMapper productMapper;
     private final PriceHistoryRepository priceHistoryRepository;
+    private final ProductImageService productImageService;
 
     public ProductServiceImpl(
             ProductRepository productRepository,
             CategoryRepository categoryRepository,
             InventoryRepository inventoryRepository,
             PriceHistoryRepository priceHistoryRepository,
-            ProductMapper productMapper) {
+            ProductMapper productMapper,
+            ProductImageService productImageService) {
 
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.inventoryRepository = inventoryRepository;
         this.priceHistoryRepository = priceHistoryRepository;
         this.productMapper = productMapper;
+        this.productImageService = productImageService;
     }
 
     @Override
@@ -382,6 +387,46 @@ public class ProductServiceImpl implements ProductService {
 
         return productMapper.toResponse(
                 product,
+                precioCompra,
+                precioVenta);
+    }
+
+    @Override
+    public ProductResponse saveImage(
+            Long id,
+            MultipartFile file) {
+
+        Product product = findProduct(id);
+
+        String imagenAnterior = product.getImagen();
+
+        String nuevaImagen =
+                productImageService.save(file);
+
+        product.setImagen(nuevaImagen);
+
+        Product updated =
+                productRepository.save(product);
+
+        if (imagenAnterior != null
+                && !imagenAnterior.isBlank()) {
+
+            productImageService.delete(imagenAnterior);
+        }
+
+        var precioActual = priceHistoryRepository
+                .findByProductoIdAndActivoTrue(id);
+
+        BigDecimal precioCompra = null;
+        BigDecimal precioVenta = null;
+
+        if (precioActual.isPresent()) {
+            precioCompra = precioActual.get().getPrecioCompra();
+            precioVenta = precioActual.get().getPrecioVenta();
+        }
+
+        return productMapper.toResponse(
+                updated,
                 precioCompra,
                 precioVenta);
     }

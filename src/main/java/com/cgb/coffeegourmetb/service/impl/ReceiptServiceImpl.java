@@ -21,7 +21,9 @@ import java.time.format.DateTimeFormatter;
 @Service
 public class ReceiptServiceImpl implements ReceiptService {
 
-    private static final String PRINTER_NAME = "SAT38TUSE";
+    private static final String PRINTER_NAME = "POS-58C";
+        //"SAT38TUSE"; // Desarrollo
+        //"POS-58C"; // Produccion
 
     private final SaleRepository saleRepository;
 

@@ -33,6 +33,9 @@ public class Product extends BaseStatusEntity {
     @Column(name = "stock_minimo", nullable = false)
     private Integer stockMinimo;
 
+    @Column(name = "imagen", length = 255)
+    private String imagen;
+
     public Product() {
     }
 
@@ -92,4 +95,7 @@ public class Product extends BaseStatusEntity {
         this.stockMinimo = stockMinimo;
     }
 
+    public String getImagen() { return imagen; }
+
+    public void setImagen(String imagen) { this.imagen = imagen; }
 }

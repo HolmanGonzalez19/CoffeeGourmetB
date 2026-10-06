@@ -20,6 +20,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
 import java.util.List;
@@ -183,6 +184,27 @@ public class ProductController {
                 id,
                 request
         );
+    }
+
+    // ============================================================
+    // INSERTAR / REEMPLAZAR IMAGEN DEL PRODUCTO
+    // ============================================================
+
+    @Operation(
+            summary = "Insertar o reemplazar imagen de un producto",
+            description = "Permite insertar una imagen por primera vez "
+                    + "o reemplazar la imagen existente de un producto."
+    )
+    @PreAuthorize(PRODUCTS_UPDATE)
+    @PostMapping(
+            value = "/{id}/image",
+            consumes = "multipart/form-data"
+    )
+    public ProductResponse saveImage(
+            @PathVariable Long id,
+            @RequestParam("file") MultipartFile file) {
+
+        return service.saveImage(id, file);
     }
 
 
