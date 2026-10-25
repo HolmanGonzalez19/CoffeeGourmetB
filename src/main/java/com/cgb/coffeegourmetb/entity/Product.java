@@ -36,6 +36,9 @@ public class Product extends BaseStatusEntity {
     @Column(name = "imagen", length = 255)
     private String imagen;
 
+    @Column(name = "precio_variable", nullable = false)
+    private boolean precioVariable = false;
+
     public Product() {
     }
 
@@ -98,4 +101,8 @@ public class Product extends BaseStatusEntity {
     public String getImagen() { return imagen; }
 
     public void setImagen(String imagen) { this.imagen = imagen; }
+
+    public boolean isPrecioVariable() { return precioVariable; }
+
+    public void setPrecioVariable(boolean precioVariable) { this.precioVariable = precioVariable; }
 }

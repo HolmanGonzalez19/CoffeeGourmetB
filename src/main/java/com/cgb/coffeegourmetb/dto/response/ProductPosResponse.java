@@ -20,6 +20,8 @@ public class ProductPosResponse {
 
     private String imagen;
 
+    private boolean precioVariable;
+
     public ProductPosResponse() {
     }
 
@@ -32,7 +34,8 @@ public class ProductPosResponse {
             String categoriaNombre,
             ProductType tipoProducto,
             BigDecimal precioVenta,
-            String imagen) {
+            String imagen,
+            boolean precioVariable) {
 
         this.id = id;
         this.codigo = codigo;
@@ -43,6 +46,7 @@ public class ProductPosResponse {
         this.tipoProducto = tipoProducto;
         this.precioVenta = precioVenta;
         this.imagen =  imagen;
+        this.precioVariable = precioVariable;
     }
 
     public Long getId() {
@@ -112,4 +116,8 @@ public class ProductPosResponse {
     public String getImagen() { return imagen; }
 
     public void setImagen(String imagen) { this.imagen = imagen;    }
+
+    public boolean isPrecioVariable() { return precioVariable; }
+
+    public void setPrecioVariable(boolean precioVariable) { this.precioVariable = precioVariable; }
 }

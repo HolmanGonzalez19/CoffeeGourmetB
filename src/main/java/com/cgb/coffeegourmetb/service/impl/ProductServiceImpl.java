@@ -152,6 +152,8 @@ public class ProductServiceImpl implements ProductService {
                         request,
                         category);
 
+        product.setPrecioVariable(false);
+
         product.setCodigo(codigo);
 
         Product savedProduct =
@@ -239,54 +241,50 @@ public class ProductServiceImpl implements ProductService {
         Product updated =
                 productRepository.save(product);
 
+
         // ==========================================
         // ACTUALIZAR HISTORIAL DE PRECIOS
         // ==========================================
 
-        PriceHistory precioActual =
-                priceHistoryRepository
-                        .findByProductoIdAndActivoTrue(id)
-                        .orElseThrow(() ->
-                                new ResourceNotFoundException(
-                                        "No existe un precio activo para el producto con id: "
-                                                + id));
+        if (!updated.isPrecioVariable()) {
 
-        boolean cambioPrecio =
-                !precioActual.getPrecioCompra()
-                        .equals(request.getPrecioCompra())
-                        ||
-                        !precioActual.getPrecioVenta()
-                                .equals(request.getPrecioVenta());
+            PriceHistory precioActual =
+                    priceHistoryRepository
+                            .findByProductoIdAndActivoTrue(id)
+                            .orElseThrow(() ->
+                                    new ResourceNotFoundException(
+                                            "No existe un precio activo para el producto con id: "
+                                                    + id));
 
-        if (cambioPrecio) {
+            boolean cambioPrecio =
+                    !precioActual.getPrecioCompra()
+                            .equals(request.getPrecioCompra())
+                            ||
+                            !precioActual.getPrecioVenta()
+                                    .equals(request.getPrecioVenta());
 
-            LocalDateTime ahora =
-                    LocalDateTime.now();
+            if (cambioPrecio) {
 
-            // Cerrar precio actual
-            precioActual.setFechaFin(ahora);
-            precioActual.setActivo(false);
+                LocalDateTime ahora = LocalDateTime.now();
 
-            priceHistoryRepository.save(precioActual);
+                precioActual.setFechaFin(ahora);
+                precioActual.setActivo(false);
 
-            // Crear nuevo historial
-            PriceHistory nuevoPrecio =
-                    new PriceHistory();
+                priceHistoryRepository.save(precioActual);
 
-            nuevoPrecio.setProducto(updated);
+                PriceHistory nuevoPrecio = new PriceHistory();
 
-            nuevoPrecio.setPrecioCompra(
-                    request.getPrecioCompra());
+                nuevoPrecio.setProducto(updated);
+                nuevoPrecio.setPrecioCompra(request.getPrecioCompra());
+                nuevoPrecio.setPrecioVenta(request.getPrecioVenta());
+                nuevoPrecio.setFechaInicio(ahora);
+                nuevoPrecio.setFechaFin(null);
+                nuevoPrecio.setActivo(true);
 
-            nuevoPrecio.setPrecioVenta(
-                    request.getPrecioVenta());
-
-            nuevoPrecio.setFechaInicio(ahora);
-            nuevoPrecio.setFechaFin(null);
-            nuevoPrecio.setActivo(true);
-
-            priceHistoryRepository.save(nuevoPrecio);
+                priceHistoryRepository.save(nuevoPrecio);
+            }
         }
+
 
         // ==========================================
         // RESPUESTA

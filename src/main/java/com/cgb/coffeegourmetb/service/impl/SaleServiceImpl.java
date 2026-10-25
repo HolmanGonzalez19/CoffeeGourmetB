@@ -100,6 +100,7 @@ public class SaleServiceImpl implements SaleService {
         return saleMapper.toResponse(sale);
     }
 
+
     @Override
     public SaleResponse create(CreateSaleRequest request) {
 
@@ -133,38 +134,53 @@ public class SaleServiceImpl implements SaleService {
 
         BigDecimal total = BigDecimal.ZERO;
 
-        for (CreateSaleDetailRequest detailRequest :
-                request.getDetalles()) {
+        for (CreateSaleDetailRequest detailRequest : request.getDetalles()) {
 
             Product producto = productRepository
-                    .findByIdAndActivoTrue(
-                            detailRequest.getProductoId())
+                    .findByIdAndActivoTrue(detailRequest.getProductoId())
                     .orElseThrow(() ->
                             new ResourceNotFoundException(
                                     "Producto no encontrado o inactivo con id: "
                                             + detailRequest.getProductoId()));
 
-            PriceHistory precioVigente = priceHistoryRepository
-                    .findByProductoIdAndActivoTrue(producto.getId())
-                    .orElseThrow(() ->
-                            new BusinessException(
-                                    "El producto '" + producto.getNombre()
-                                            + "' no tiene un precio vigente."));
+            BigDecimal precioVenta;
 
-            BigDecimal precioVenta = precioVigente.getPrecioVenta();
+            if (producto.isPrecioVariable()) {
 
-            if (precioVenta == null
-                    || precioVenta.compareTo(BigDecimal.ZERO) <= 0) {
+                // Productos varios: el precio lo proporciona el usuario.
+                precioVenta = detailRequest.getPrecioUnitario();
 
-                throw new BusinessException(
-                        "El producto '" + producto.getNombre()
-                                + "' no tiene un precio de venta válido.");
+                if (precioVenta == null
+                        || precioVenta.compareTo(BigDecimal.ZERO) <= 0) {
+
+                    throw new BusinessException(
+                            "Debe ingresar un precio mayor que cero para el producto '"
+                                    + producto.getNombre() + "'.");
+                }
+
+            } else {
+
+                // Productos normales: el precio siempre procede del backend.
+                PriceHistory precioVigente = priceHistoryRepository
+                        .findByProductoIdAndActivoTrue(producto.getId())
+                        .orElseThrow(() ->
+                                new BusinessException(
+                                        "El producto '" + producto.getNombre()
+                                                + "' no tiene un precio vigente."));
+
+                precioVenta = precioVigente.getPrecioVenta();
+
+                if (precioVenta == null
+                        || precioVenta.compareTo(BigDecimal.ZERO) <= 0) {
+
+                    throw new BusinessException(
+                            "El producto '" + producto.getNombre()
+                                    + "' no tiene un precio de venta válido.");
+                }
             }
 
-            BigDecimal subtotal = precioVenta
-                    .multiply(
-                            BigDecimal.valueOf(
-                                    detailRequest.getCantidad()));
+            BigDecimal subtotal = precioVenta.multiply(
+                    BigDecimal.valueOf(detailRequest.getCantidad()));
 
             SaleDetail detalle = new SaleDetail();
 
@@ -182,23 +198,25 @@ public class SaleServiceImpl implements SaleService {
         sale.setTotal(total);
 
         /*
-         * Primero se guarda la venta con sus detalles.
+         * Guarda la venta y sus detalles.
          * CascadeType.ALL permite persistir los detalles.
          */
         Sale ventaGuardada = saleRepository.save(sale);
 
         /*
-         * Se descuenta el inventario después de guardar
-         * la venta.
-         *
-         * Si existe stock insuficiente, InventoryTransactionService
-         * lanza una BusinessException y la transacción completa
-         * realiza rollback.
+         * Descuenta inventario únicamente de productos normales.
+         * Si ocurre un error de inventario, la transacción realiza rollback.
          */
         for (SaleDetail detalle : ventaGuardada.getDetalles()) {
 
+            Product producto = detalle.getProducto();
+
+            if (producto.isPrecioVariable()) {
+                continue;
+            }
+
             inventoryTransactionService.processMovement(
-                    detalle.getProducto().getId(),
+                    producto.getId(),
                     usuario.getId(),
                     MovementType.SALIDA,
                     detalle.getCantidad(),
@@ -209,6 +227,7 @@ public class SaleServiceImpl implements SaleService {
 
         return saleMapper.toResponse(ventaGuardada);
     }
+
 
     @Override
     public List<SaleResponse> findByUser(Long userId) {
@@ -311,9 +330,14 @@ public class SaleServiceImpl implements SaleService {
          * descontadas originalmente por la venta.
          */
         for (SaleDetail detalle : sale.getDetalles()) {
+            Product producto = detalle.getProducto();
+
+            if (producto.isPrecioVariable()) {
+                continue;
+            }
 
             inventoryTransactionService.processMovement(
-                    detalle.getProducto().getId(),
+                    producto.getId(),
                     usuarioAnulacion.getId(),
                     MovementType.ENTRADA,
                     detalle.getCantidad(),

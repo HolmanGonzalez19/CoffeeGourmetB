@@ -75,26 +75,31 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Object[]> findAllActiveWithCurrentPriceData();
 
     @Query("""
-        SELECT new com.cgb.coffeegourmetb.dto.response.ProductPosResponse(
-                p.id,
-                p.codigo,
-                p.codigoBarras,
-                p.nombre,
-                c.id,
-                c.nombre,
-                p.tipoProducto,
-                ph.precioVenta,
-                p.imagen
-            )
-            FROM Product p
-            JOIN p.categoria c
-            JOIN PriceHistory ph
-                ON ph.producto = p
-                AND ph.activo = true
-                AND ph.precioVenta > 0
-            WHERE p.activo = true
-            ORDER BY p.nombre
-        """)
+    SELECT new com.cgb.coffeegourmetb.dto.response.ProductPosResponse(
+        p.id,
+        p.codigo,
+        p.codigoBarras,
+        p.nombre,
+        c.id,
+        c.nombre,
+        p.tipoProducto,
+        ph.precioVenta,
+        p.imagen,
+        p.precioVariable
+    )
+    FROM Product p
+    JOIN p.categoria c
+    LEFT JOIN PriceHistory ph
+        ON ph.producto = p
+        AND ph.activo = true
+        AND ph.precioVenta > 0
+    WHERE p.activo = true
+        AND (
+            p.precioVariable = true
+            OR ph.id IS NOT NULL
+        )
+    ORDER BY p.nombre
+    """)
     List<ProductPosResponse> findAllForPos();
 
     @Query("""
