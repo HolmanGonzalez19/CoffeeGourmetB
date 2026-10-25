@@ -66,6 +66,7 @@ public class ProductMapper {
         response.setCodigoBarras(product.getCodigoBarras());
         response.setNombre(product.getNombre());
         response.setDescripcion(product.getDescripcion());
+        response.setImagen(product.getImagen());
 
         response.setTipoProducto(
                 product.getTipoProducto());

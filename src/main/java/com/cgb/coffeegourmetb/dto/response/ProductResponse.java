@@ -30,6 +30,7 @@ public class ProductResponse {
     private LocalDateTime fechaCreacion;
 
     private LocalDateTime fechaActualizacion;
+    private String imagen;
 
     public ProductResponse() {
     }
@@ -142,7 +143,9 @@ public class ProductResponse {
         return fechaActualizacion;
     }
 
-    public void setFechaActualizacion(LocalDateTime fechaActualizacion) {
-        this.fechaActualizacion = fechaActualizacion;
-    }
+    public void setFechaActualizacion(LocalDateTime fechaActualizacion) { this.fechaActualizacion = fechaActualizacion; }
+
+    public String getImagen() { return imagen; }
+
+    public void setImagen(String imagen) { this.imagen = imagen; }
 }
